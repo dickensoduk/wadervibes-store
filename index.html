@@ -713,56 +713,68 @@ function setCurrency(curr) {
         return;
       }
 
-      filtered.forEach((item) => {
-        const sizes = Array.isArray(item.sizes) && item.sizes.length ? item.sizes : ["Standard"];
-        const sizeOptions = sizes.map(s => `<option value="${s}">Size: ${s}</option>`).join("");
-        const isAffiliate = item.fulfillment_type === "affiliate" && item.external_url;
-        const priceVal = formatPrice(item.price_usd || item.price || 0);
-        const badgeLabel = item.tag || (isAffiliate ? "Featured Plug" : "#wadervibes");
+        filtered.forEach((item) => {
+    const sizes = Array.isArray(item.sizes) && item.sizes.length ? item.sizes : ["Standard"];
+    const sizeOptions = sizes.map((s) => `<option value="${s}">Size: ${s}</option>`).join("");
+    const isAffiliate = item.fulfillment_type === "affiliate" && item.external_url;
+    const priceVal = formatPrice(item.price_usd || item.price || 0);
+    const badgeLabel = item.tag || (isAffiliate ? "Featured Plug" : "#wadervibes");
+    const stockCount = Number(item.stock_quantity ?? 7);
+    const isOutOfStock = !isAffiliate && stockCount <= 0;
 
-        const card = document.createElement("article");
-        card.className = "card";
-        card.innerHTML = `
-          <div class="card-img">
-            <span class="drop-num">DROP #${item.dropNumber}</span>
-            <span class="tag-pill">${badgeLabel}</span>
-            ${item.image_url ? `<img src="${item.image_url}" alt="${item.title}" />` : `<span>#wadervibes</span>`}
-          </div>
-          <div class="card-body">
-            <h2 class="card-title">${item.title}</h2>
-            <p class="card-desc">${item.description || "Official @king_wader drop."}</p>
-            <div class="price-row">
-              <span class="price">${priceVal}</span>
-              <span class="shipping-note">${isAffiliate ? "Partner Direct" : "Nationwide Shipping Kenya"}</span>
-            </div>
-            ${isAffiliate ? "" : `<select id="size-${item.id}">${sizeOptions}</select>`}
-            <button class="btn" data-id="${item.id}">${isAffiliate ? "Shop Partner Plug ↗" : "Order Now"}</button>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
+    const card = document.createElement("article");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="card-img">
+        <span class="drop-num">DROP #${item.dropNumber}</span>
+        <span class="tag-pill">${badgeLabel}</span>
+        ${item.image_url ? `<img src="${item.image_url}" alt="${item.title}" />` : `<span>#wadervibes</span>`}
+      </div>
+      <div class="card-body">
+        <h2 class="card-title">${item.title}</h2>
+        <p class="card-desc">${item.description || "Official @king_wader drop."}</p>
+        <div class="price-row">
+          <span class="price">${priceVal}</span>
+          <span class="shipping-note">${
+            isAffiliate
+              ? "Partner Direct"
+              : isOutOfStock
+                ? "Sold Out"
+                : `${stockCount} left • Nationwide Shipping Kenya`
+          }</span>
+        </div>
+        ${isAffiliate || isOutOfStock ? "" : `<select id="size-${item.id}">${sizeOptions}</select>`}
+        <button class="btn" data-id="${item.id}" ${isOutOfStock ? "disabled style='opacity:0.5;cursor:not-allowed;'" : ""}>
+          ${isAffiliate ? "Shop Partner Flag" : isOutOfStock ? "Sold Out" : "Order Now"}
+        </button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
 
-      document.querySelectorAll(".card .btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const item = ALL_PRODUCTS.find(p => String(p.id) === String(btn.dataset.id));
-          if (!item) return;
+  document.querySelectorAll(".card .btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const item = ALL_PRODUCTS.find((p) => String(p.id) === String(btn.dataset.id));
+      if (!item) return;
 
-          if (item.fulfillment_type === "affiliate" && item.external_url) {
-            window.open(item.external_url, "_blank", "noopener,noreferrer");
-            return;
-          }
+      if (item.fulfillment_type === "affiliate" && item.external_url) {
+        window.open(item.external_url, "_blank", "noopener,noreferrer");
+        return;
+      }
 
-          activeProduct = item;
-          const sizeEl = document.getElementById(`size-${item.id}`);
-          activeSize = sizeEl ? sizeEl.value : "Standard";
-          const priceVal = formatPrice(item.price_usd || item.price || 0);
-          document.getElementById("modal-item-title").textContent = item.title;
-          document.getElementById("modal-item-meta").textContent = `Option: ${activeSize} • ${priceVal} (Nationwide Shipping Kenya)`;
-          updatePaymentEligibility();
-          document.getElementById("checkout-modal").classList.add("active");
-        });
-      });
-    }
+      if (Number(item.stock_quantity ?? 7) <= 0) return;
+
+      activeProduct = item;
+      const sizeEl = document.getElementById(`size-${item.id}`);
+      activeSize = sizeEl ? sizeEl.value : "Standard";
+      const priceVal = formatPrice(item.price_usd || item.price || 0);
+      document.getElementById("modal-item-title").textContent = item.title;
+      document.getElementById("modal-item-meta").textContent = `Option: ${activeSize} • ${priceVal} (Nationwide Shipping)`;
+      updatePaymentEligibility();
+      document.getElementById("checkout-modal").classList.add("active");
+    });
+  });
+}
 
     function updatePaymentEligibility() {
       const county = document.getElementById("cust-county").value;
