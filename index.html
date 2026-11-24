@@ -499,6 +499,14 @@
     <div class="header-right">
       <span class="vibe-tag">#wadervibes</span>
       <span class="nav-badge">Nationwide Shipping Kenya</span>
+      <div id="curr-switch" style="display:inline-flex;background:rgba(7,19,13,.9);border:1px solid
+rgba(24,178,103,.35);border-radius:999px;padding:2px;">
+<button type="button" id="btn-kes" onclick="setCurrency('KES')" style=
+"background:#18b267;color:#04110a;border:none;border-radius:999px;padding:.2rem
+.6rem;font-size:.75rem;font-weight:800;cursor:pointer;">KES</button>
+<button type="button" id="btn-usd" onclick="setCurrency('USD')" style=
+"background:transparent;color:#9eb3a7;border:none;border-radius:999px;padding:.2rem
+.6rem;font-size:.75rem;font-weight:800;cursor:pointer;">USD</button>
     </div>
   </header>
 
@@ -622,7 +630,7 @@
         title: '#wadervibes "Okay. So?" Heavyweight Tee',
         description: "Garment-dyed 100% ring-spun cotton. Clean front, bold back POV statement, #wadervibes inner neck tag.",
         price_usd: 29.99,
-        sizes: ["S", "M", "L", "XL", "2XL"],
+        sizes: ["S", "M", "L", "XL", "2XL","3XL"],
         tag: "Streetwear",
         category: "apparel",
         image_url: "",
