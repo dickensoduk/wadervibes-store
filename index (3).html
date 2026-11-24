@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WADER | Official Shop of @king_wader (#wadervibes)</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307130d'/%3E%3Cpath d='M12 44L16 22L26 32L32 18L38 32L48 22L52 44H12Z' fill='%2318b267'/%3E%3Ccircle cx='16' cy='18' r='3' fill='%2318b267'/%3E%3Ccircle cx='32' cy='14' r='3.5' fill='%2318b267'/%3E%3Ccircle cx='48' cy='18' r='3' fill='%2318b267'/%3E%3C/svg%3E" />
+  <style>
+    :root {
+      --bg-dark: #07130d;
+      --bg-card: rgba(15, 36, 25, 0.72);
+      --accent: #18b267;
+      --accent-hover: #139656;
+      --text-main: #f3f7f4;
+      --text-muted: #9eb3a7;
+      --border: rgba(255, 255, 255, 0.12);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at top left, #0e2c1d 0%, var(--bg-dark) 60%);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Running NLT Scripture Backdrop */
+    .scripture-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+      opacity: 0.045;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      user-select: none;
+    }
+    .scripture-track {
+      white-space: nowrap;
+      font-family: Georgia, "Times New Roman", serif;
+      font-style: italic;
+      font-size: 1.15rem;
+      letter-spacing: 0.08em;
+      animation: marquee 48s linear infinite;
+    }
+    .scripture-track.reverse {
+      animation-direction: reverse;
+      animation-duration: 56s;
+    }
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+
+    header, .hero, .controls-bar, .grid, .creator-section, .policies, footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(7, 19, 13, 0.85);
+      border-bottom: 1px solid var(--border);
+      padding: 0.95rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-size: 1.4rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+    .crown-icon {
+      width: 24px;
+      height: 24px;
+      color: var(--accent);
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
+    }
+    .brand:hover .crown-icon {
+      transform: translateY(-3px) rotate(-8deg) scale(1.12);
+      filter: drop-shadow(0 0 8px rgba(24, 178, 103, 0.7));
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .vibe-tag {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.03em;
+    }
+    .nav-badge {
+      font-size: 0.78rem;
+      background: rgba(24, 178, 103, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(24, 178, 103, 0.35);
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 3.5rem 5% 2rem;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+    .pov-pill {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(24, 178, 103, 0.12);
+      border: 1px solid rgba(24, 178, 103, 0.3);
+      padding: 0.32rem 0.85rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.1rem, 5.2vw, 3.35rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.12;
+      margin-bottom: 0.85rem;
+    }
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin-bottom: 1.25rem;
+    }
+    .verse-box {
+      display: inline-block;
+      background: rgba(15, 36, 25, 0.55);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      padding: 0.65rem 1.15rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      max-width: 600px;
+    }
+    .verse-box strong {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Search & Filter Bar */
+    .controls-bar {
+      max-width: 1200px;
+      margin: 0 auto 1.25rem;
+      padding: 0 5%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .filter-pills {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .pill-btn {
+      background: rgba(15, 36, 25, 0.72);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.45rem 0.95rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .pill-btn.active, .pill-btn:hover {
+      background: var(--accent);
+      color: #04110a;
+      border-color: var(--accent);
+    }
+    .search-box {
+      flex: 1;
+      min-width: 220px;
+      max-width: 310px;
+    }
+    .search-box input {
+      margin-bottom: 0;
+      background: rgba(15, 36, 25, 0.75);
+      backdrop-filter: blur(10px);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1.75rem;
+      padding: 0.5rem 5% 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(24, 178, 103, 0.45);
+    }
+    .card-img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: #0d1f16;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--text-muted);
+      position: relative;
+      overflow: hidden;
+    }
+    .card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .drop-num {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: var(--accent);
+      color: #04110a;
+      font-size: 0.75rem;
+      font-weight: 900;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      letter-spacing: 0.04em;
+    }
+    .tag-pill {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(7, 19, 13, 0.85);
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .card-body {
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+    }
+    .card-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      flex: 1;
+    }
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.85rem;
+    }
+    .price {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .shipping-note {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+    select, input {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(7, 19, 13, 0.9);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+    .btn {
+      width: 100%;
+      padding: 0.85rem;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #04110a;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .btn:hover { background: var(--accent-hover); }
+
+    /* Creator POV & Social Hub */
+    .creator-section {
+      max-width: 1200px;
+      margin: 0 auto 2.5rem;
+      padding: 0 5%;
+    }
+    .creator-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      backdrop-filter: blur(12px);
+      padding: 1.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.25rem;
+    }
+    .creator-info h2 {
+      font-size: 1.25rem;
+      font-weight: 900;
+      margin-bottom: 0.3rem;
+    }
+    .creator-info p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 560px;
+    }
+    .social-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+    .social-chip {
+      text-decoration: none;
+      color: var(--text-main);
+      background: rgba(7, 19, 13, 0.85);
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.9rem;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+    .social-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Payment method pills in modal */
+    .pay-methods {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin-bottom: 0.85rem;
+    }
+    .pay-option {
+      border: 1px solid var(--border);
+      background: rgba(7, 19, 13, 0.85);
+      border-radius: 10px;
+      padding: 0.65rem 0.75rem;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+    .pay-option.selected {
+      border-color: var(--accent);
+      background: rgba(24, 178, 103, 0.14);
+    }
+    .pay-option strong {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-main);
+    }
+    .pay-option span {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+    .pod-alert {
+      font-size: 0.78rem;
+      padding: 0.6rem 0.8rem;
+      border-radius: 10px;
+      margin-bottom: 0.85rem;
+      background: rgba(24, 178, 103, 0.12);
+      border: 1px solid rgba(24, 178, 103, 0.35);
+      color: var(--text-main);
+    }
+    .pod-alert.warn {
+      background: rgba(255, 193, 7, 0.1);
+      border-color: rgba(255, 193, 7, 0.35);
+      color: #f5df9a;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .modal-backdrop.active { display: flex; }
+    .modal {
+      background: #0c2116;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      max-width: 460px;
+      width: 100%;
+      padding: 1.75rem;
+      margin: auto;
+    }
+    .modal h2 { font-size: 1.25rem; margin-bottom: 0.35rem; }
+    .modal p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; }
+    .modal-actions { display: flex; gap: 0.75rem; margin-top: 0.5rem; }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+    }
+    .policies {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 5%;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .policies h3 { color: var(--text-main); font-size: 0.95rem; margin-bottom: 0.4rem; }
+    footer {
+      text-align: center;
+      padding: 1.5rem 5% 2.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Running NLT Scripture Backdrop -->
+  <div class="scripture-bg" aria-hidden="true">
+    <div class="scripture-track">
+      Commit your actions to the LORD, and your plans will succeed. — Proverbs 16:3 (NLT) &bull; Trust in the LORD with all your heart; do not depend on your own understanding. — Proverbs 3:5 (NLT) &bull; Commit your actions to the LORD, and your plans will succeed. — Proverbs 16:3 (NLT) &bull;
+    </div>
+    <div class="scripture-track reverse">
+      Be strong and courageous! Do not be afraid or discouraged. For the LORD your God is with you wherever you go. — Joshua 1:9 (NLT) &bull; Above all else, guard your heart, for everything you do flows from it. — Proverbs 4:23 (NLT) &bull; Be strong and courageous! — Joshua 1:9 (NLT) &bull;
+    </div>
+    <div class="scripture-track">
+      Whatever you do, work at it with all your heart, as working for the Lord, not for human masters. — Colossians 3:23 (NLT) &bull; Let all that you do be done in love. — 1 Corinthians 16:14 (NLT) &bull; Whatever you do, work at it with all your heart. — Colossians 3:23 (NLT) &bull;
+    </div>
+  </div>
+
+  <header>
+    <a href="#" class="brand">
+      <svg class="crown-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M3 18h18v2H3v-2zm0-11l5 4 4-6 4 6 5-4-2 9H5L3 7z"/>
+      </svg>
+      <span>WADER</span>
+    </a>
+    <div class="header-right">
+      <span class="vibe-tag">#wadervibes</span>
+      <span class="nav-badge">Nationwide Shipping Kenya</span>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="pov-pill">@KING_WADER OFFICIAL DROP HUB</span>
+    <h1>NO FILTER. JUST POV.</h1>
+    <p>Curated kicks, heavyweight streetwear, and exclusive plugs handpicked by <strong>@king_wader</strong>. Delivered nationwide across all 47 counties in Kenya.</p>
+    <div class="verse-box">
+      “Commit your actions to the LORD, and your plans will succeed.” — <strong>Proverbs 16:3 (NLT)</strong>
+    </div>
+  </section>
+
+  <!-- Search & Category Filter Bar -->
+  <div class="controls-bar">
+    <div class="filter-pills" id="category-pills">
+      <button class="pill-btn active" data-cat="all">All Drops</button>
+      <button class="pill-btn" data-cat="kicks">Kicks & Slides</button>
+      <button class="pill-btn" data-cat="apparel">Streetwear</button>
+      <button class="pill-btn" data-cat="plugs">Featured Plugs</button>
+    </div>
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="Search drop # or item name..." />
+    </div>
+  </div>
+
+  <main class="grid" id="product-grid"></main>
+
+  <!-- Creator POV & Social Community Hub -->
+  <section class="creator-section">
+    <div class="creator-card">
+      <div class="creator-info">
+        <h2>Welcome to the Hot Seat — @king_wader</h2>
+        <p>Spotted a pair or tee in a recent TikTok POV? Match the <strong>Drop #</strong> above to lock yours in, or tap into the official channels below.</p>
+      </div>
+      <div class="social-links">
+        <a class="social-chip" href="https://www.tiktok.com/@king_wader" target="_blank" rel="noopener noreferrer">TikTok @king_wader</a>
+        <a class="social-chip" href="https://www.instagram.com/king.wader" target="_blank" rel="noopener noreferrer">Instagram @king.wader</a>
+        <a class="social-chip" href="https://www.youtube.com/@king_wader" target="_blank" rel="noopener noreferrer">YouTube</a>
+        <a class="social-chip" href="https://x.com/king_wader" target="_blank" rel="noopener noreferrer">X (Twitter)</a>
+        <a class="social-chip" href="https://www.pinterest.com/king_wader" target="_blank" rel="noopener noreferrer">Pinterest</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="policies">
+    <div>
+      <h3>Nationwide Kenya Delivery</h3>
+      <p>Same-day rider dispatch within Kisumu & Nairobi. Next-day parcel delivery across all other counties via EasyCoach, Ena Coach, and Wells Fargo.</p>
+    </div>
+    <div>
+      <h3>M-Pesa & Pay on Delivery</h3>
+      <p>Pay seamlessly via M-Pesa Express / Card, or select <strong>Pay on Delivery (Cash or M-Pesa)</strong> for eligible orders in Kisumu and Nairobi.</p>
+    </div>
+    <div>
+      <h3>Sizing & Exchanges</h3>
+      <p>Need a size swap or order update? Reach out directly via TikTok DM or email <a href="mailto:iamwaderking@gmail.com" style="color:var(--accent);">iamwaderking@gmail.com</a> within 48 hours of delivery.</p>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 WADER &bull; <strong>#wadervibes</strong> &bull; Official Store of <a href="https://www.tiktok.com/@king_wader" target="_blank" rel="noopener noreferrer">@king_wader</a>
+  </footer>
+
+  <!-- Checkout Modal -->
+  <div class="modal-backdrop" id="checkout-modal">
+    <div class="modal">
+      <h2 id="modal-item-title">Complete Order</h2>
+      <p id="modal-item-meta">Size: L &bull; $29.99 USD (Nationwide Shipping Kenya)</p>
+      <form id="checkout-form">
+        <input type="text" id="cust-name" placeholder="Full Name" required />
+        <input type="tel" id="cust-phone" placeholder="M-Pesa / WhatsApp Phone (e.g. 0712 345 678)" required />
+        <input type="email" id="cust-email" placeholder="Email Address (for receipt & tracking)" required />
+        <select id="cust-county" required>
+          <option value="Kisumu">Kisumu County (Pay on Delivery Available)</option>
+          <option value="Nairobi">Nairobi County (Pay on Delivery Available)</option>
+          <option value="Mombasa">Mombasa County</option>
+          <option value="Nakuru">Nakuru County</option>
+          <option value="Uasin Gishu">Uasin Gishu (Eldoret)</option>
+          <option value="Kiambu">Kiambu County</option>
+          <option value="Machakos">Machakos County</option>
+          <option value="Kajiado">Kajiado County</option>
+          <option value="Kakamega">Kakamega County</option>
+          <option value="Kisii">Kisii County</option>
+          <option value="Other Kenya County">Other Kenya County (Nationwide Courier)</option>
+        </select>
+        <input type="text" id="cust-city" placeholder="Town / Estate / Area (e.g. Milimani, Westlands, Kilimani)" required />
+        <input type="text" id="cust-address" placeholder="Street / Building / Preferred Bus Courier Stage" required />
+
+        <!-- Payment Method Selector -->
+        <div class="pay-methods">
+          <div class="pay-option selected" id="opt-mpesa" data-method="mpesa">
+            <strong>M-Pesa / Card Now</strong>
+            <span>Instant confirmation</span>
+          </div>
+          <div class="pay-option" id="opt-pod" data-method="pod">
+            <strong>Pay on Delivery</strong>
+            <span>Kisumu & Nairobi only</span>
+          </div>
+        </div>
+        <div class="pod-alert" id="pay-hint">
+          Pay securely via M-Pesa Express or Card through Paystack.
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="close-modal">Cancel</button>
+          <button type="submit" class="btn" id="submit-order-btn">Pay with M-Pesa / Card</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Paystack Inline Checkout Script -->
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <script>
+    const BACKEND_URL = "https://wadervibes-core.onrender.com";
+    const PAYSTACK_PUBLIC_KEY = "pk_test_replace_with_your_paystack_key";
+
+    const FALLBACK_PRODUCTS = [
+      {
+        id: "wader-okay-so-tee",
+        title: '#wadervibes "Okay. So?" Heavyweight Tee',
+        description: "Garment-dyed 100% ring-spun cotton. Clean front, bold back POV statement, #wadervibes inner neck tag.",
+        price_usd: 29.99,
+        sizes: ["S", "M", "L", "XL", "2XL"],
+        tag: "Streetwear",
+        category: "apparel",
+        image_url: "",
+        fulfillment_type: "manual"
+      }
+    ];
+
+    let ALL_PRODUCTS = [];
+    let activeCategory = "all";
+    let activeProduct = null;
+    let activeSize = null;
+    let selectedPayMethod = "mpesa";
+
+    function inferCategory(item) {
+      if (item.category) return item.category.toLowerCase();
+      const text = ((item.title || "") + " " + (item.tag || "")).toLowerCase();
+      if (item.fulfillment_type === "affiliate" || item.external_url) return "plugs";
+      if (text.includes("shoe") || text.includes("sneaker") || text.includes("slide") || text.includes("kick") || text.includes("jordan") || text.includes("air force")) return "kicks";
+      return "apparel";
+    }
+
+    async function loadProducts() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/products`);
+        if (!res.ok) throw new Error("Failed to fetch products");
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : (data.products || []);
+        ALL_PRODUCTS = list.length > 0 ? list : FALLBACK_PRODUCTS;
+      } catch (err) {
+        ALL_PRODUCTS = FALLBACK_PRODUCTS;
+      }
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById("product-grid");
+      const query = document.getElementById("search-input").value.trim().toLowerCase();
+      grid.innerHTML = "";
+
+      const filtered = ALL_PRODUCTS.map((item, idx) => ({
+        ...item,
+        dropNumber: String(idx + 1).padStart(2, "0"),
+        resolvedCategory: inferCategory(item)
+      })).filter(item => {
+        const matchesCat = activeCategory === "all" || item.resolvedCategory === activeCategory;
+        const matchesQuery = !query ||
+          (item.title || "").toLowerCase().includes(query) ||
+          (item.description || "").toLowerCase().includes(query) ||
+          `#${item.dropNumber}`.includes(query) ||
+          item.dropNumber === query;
+        return matchesCat && matchesQuery;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem 1rem; color:var(--text-muted);">No drops match that filter yet. Check back soon or tap <strong>All Drops</strong>.</div>`;
+        return;
+      }
+
+      filtered.forEach((item) => {
+        const sizes = Array.isArray(item.sizes) && item.sizes.length ? item.sizes : ["Standard"];
+        const sizeOptions = sizes.map(s => `<option value="${s}">Size: ${s}</option>`).join("");
+        const isAffiliate = item.fulfillment_type === "affiliate" && item.external_url;
+        const priceVal = Number(item.price_usd || item.price || 0).toFixed(2);
+        const badgeLabel = item.tag || (isAffiliate ? "Featured Plug" : "#wadervibes");
+
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="card-img">
+            <span class="drop-num">DROP #${item.dropNumber}</span>
+            <span class="tag-pill">${badgeLabel}</span>
+            ${item.image_url ? `<img src="${item.image_url}" alt="${item.title}" />` : `<span>#wadervibes</span>`}
+          </div>
+          <div class="card-body">
+            <h2 class="card-title">${item.title}</h2>
+            <p class="card-desc">${item.description || "Official @king_wader drop."}</p>
+            <div class="price-row">
+              <span class="price">$${priceVal}</span>
+              <span class="shipping-note">${isAffiliate ? "Partner Direct" : "Nationwide Shipping Kenya"}</span>
+            </div>
+            ${isAffiliate ? "" : `<select id="size-${item.id}">${sizeOptions}</select>`}
+            <button class="btn" data-id="${item.id}">${isAffiliate ? "Shop Partner Plug ↗" : "Order Now"}</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      document.querySelectorAll(".card .btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const item = ALL_PRODUCTS.find(p => String(p.id) === String(btn.dataset.id));
+          if (!item) return;
+
+          if (item.fulfillment_type === "affiliate" && item.external_url) {
+            window.open(item.external_url, "_blank", "noopener,noreferrer");
+            return;
+          }
+
+          activeProduct = item;
+          const sizeEl = document.getElementById(`size-${item.id}`);
+          activeSize = sizeEl ? sizeEl.value : "Standard";
+          const priceVal = Number(item.price_usd || item.price || 0).toFixed(2);
+          document.getElementById("modal-item-title").textContent = item.title;
+          document.getElementById("modal-item-meta").textContent = `Option: ${activeSize} • $${priceVal} USD (Nationwide Shipping Kenya)`;
+          updatePaymentEligibility();
+          document.getElementById("checkout-modal").classList.add("active");
+        });
+      });
+    }
+
+    function updatePaymentEligibility() {
+      const county = document.getElementById("cust-county").value;
+      const isPodEligible = county === "Kisumu" || county === "Nairobi";
+      const podOpt = document.getElementById("opt-pod");
+      const mpesaOpt = document.getElementById("opt-mpesa");
+      const hint = document.getElementById("pay-hint");
+      const submitBtn = document.getElementById("submit-order-btn");
+
+      if (!isPodEligible && selectedPayMethod === "pod") {
+        selectedPayMethod = "mpesa";
+      }
+
+      podOpt.classList.toggle("selected", selectedPayMethod === "pod");
+      mpesaOpt.classList.toggle("selected", selectedPayMethod === "mpesa");
+
+      if (selectedPayMethod === "pod") {
+        hint.className = "pod-alert";
+        hint.textContent = `Pay on Delivery enabled for ${county}! Pay via M-Pesa or Cash when the rider arrives.`;
+        submitBtn.textContent = "Confirm Pay on Delivery Order";
+      } else if (!isPodEligible) {
+        hint.className = "pod-alert warn";
+        hint.textContent = `Pay on Delivery is available in Kisumu & Nairobi only. Complete your ${county} delivery via M-Pesa Express or Card below.`;
+        submitBtn.textContent = "Pay Now (M-Pesa / Card)";
+      } else {
+        hint.className = "pod-alert";
+        hint.textContent = "Pay instantly via M-Pesa Express or Card (or switch to Pay on Delivery for Kisumu & Nairobi).";
+        submitBtn.textContent = "Pay Now (M-Pesa / Card)";
+      }
+    }
+
+    document.getElementById("opt-mpesa").addEventListener("click", () => {
+      selectedPayMethod = "mpesa";
+      updatePaymentEligibility();
+    });
+
+    document.getElementById("opt-pod").addEventListener("click", () => {
+      const county = document.getElementById("cust-county").value;
+      if (county !== "Kisumu" && county !== "Nairobi") {
+        alert("Pay on Delivery is only available for Kisumu and Nairobi orders. Please select Kisumu/Nairobi or pay via M-Pesa / Card for upcountry courier delivery.");
+        return;
+      }
+      selectedPayMethod = "pod";
+      updatePaymentEligibility();
+    });
+
+    document.getElementById("cust-county").addEventListener("change", updatePaymentEligibility);
+
+    document.querySelectorAll("#category-pills .pill-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#category-pills .pill-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeCategory = btn.dataset.cat;
+        renderProducts();
+      });
+    });
+
+    document.getElementById("search-input").addEventListener("input", renderProducts);
+
+    document.getElementById("close-modal").addEventListener("click", () => {
+      document.getElementById("checkout-modal").classList.remove("active");
+    });
+
+    document.getElementById("checkout-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!activeProduct) return;
+
+      const customer = {
+        name: document.getElementById("cust-name").value.trim(),
+        phone: document.getElementById("cust-phone").value.trim(),
+        email: document.getElementById("cust-email").value.trim(),
+        address: document.getElementById("cust-address").value.trim(),
+        city: document.getElementById("cust-city").value.trim(),
+        state: document.getElementById("cust-county").value,
+        zip: "00100",
+        country: "KE"
+      };
+
+      const priceVal = Number(activeProduct.price_usd || activeProduct.price || 0);
+
+      // Handle Pay on Delivery for Kisumu & Nairobi
+      if (selectedPayMethod === "pod") {
+        const submitBtn = document.getElementById("submit-order-btn");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Confirming Order...";
+        try {
+          await fetch(`${BACKEND_URL}/api/orders/pod`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              product_id: activeProduct.id,
+              product_title: activeProduct.title,
+              size: activeSize,
+              amount_usd: priceVal,
+              payment_method: "Pay on Delivery (Cash / M-Pesa)",
+              customer
+            })
+          });
+        } catch (err) {
+          // Graceful confirmation even if endpoint falls back
+        }
+        submitBtn.disabled = false;
+        document.getElementById("checkout-modal").classList.remove("active");
+        alert(`Order confirmed for ${customer.state}! We will reach out on WhatsApp/SMS (${customer.phone}) to dispatch your rider. Have M-Pesa or cash ready upon delivery.`);
+        return;
+      }
+
+      // Handle M-Pesa / Card via Paystack
+      if (typeof PaystackPop === "undefined" || PAYSTACK_PUBLIC_KEY.includes("replace_with")) {
+        alert("Order preview ready! Add your Paystack Public Key inside index.html (and enable M-Pesa in your Paystack dashboard) to accept live M-Pesa & Card checkouts.");
+        return;
+      }
+
+      const handler = PaystackPop.setup({
+        key: PAYSTACK_PUBLIC_KEY,
+        email: customer.email,
+        amount: Math.round(priceVal * 100),
+        currency: "USD",
+        channels: ["mobile_money", "card"],
+        metadata: {
+          product_id: activeProduct.id,
+          product_title: activeProduct.title,
+          size: activeSize,
+          payment_preference: "M-Pesa / Card",
+          customer
+        },
+        callback: function(response) {
+          document.getElementById("checkout-modal").classList.remove("active");
+          alert(`Payment successful! Reference: ${response.reference}. Your @king_wader order is being prepared for delivery to ${customer.state}.`);
+        },
+        onClose: function() {}
+      });
+
+      handler.openIframe();
+    });
+
+    loadProducts();
+  </script>
+</body>
+</html>
