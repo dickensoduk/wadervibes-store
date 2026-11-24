@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>#wadervibes | Official Streetwear & Kicks</title>
+  <style>
+    :root {
+      --bg-dark: #07130d;
+      --bg-card: rgba(15, 36, 25, 0.72);
+      --accent: #18b267;
+      --accent-hover: #139656;
+      --text-main: #f3f7f4;
+      --text-muted: #9eb3a7;
+      --border: rgba(255, 255, 255, 0.12);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at top left, #0e2c1d 0%, var(--bg-dark) 60%);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(7, 19, 13, 0.85);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+    .brand span { color: var(--accent); }
+    .nav-badge {
+      font-size: 0.8rem;
+      background: rgba(24, 178, 103, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(24, 178, 103, 0.35);
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+    .hero {
+      text-align: center;
+      padding: 4rem 5% 2.5rem;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+    }
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin-bottom: 1.5rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1.75rem;
+      padding: 1rem 5% 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(24, 178, 103, 0.45);
+    }
+    .card-img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: #0d1f16;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--text-muted);
+      position: relative;
+      overflow: hidden;
+    }
+    .card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .tag-pill {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(7, 19, 13, 0.85);
+      border: 1px solid var(--border);
+      font-size: 0.72rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .card-body {
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+    .card-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      flex: 1;
+    }
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.85rem;
+    }
+    .price {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .shipping-note {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+    select, input {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(7, 19, 13, 0.9);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+    .btn {
+      width: 100%;
+      padding: 0.85rem;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #04110a;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .btn:hover { background: var(--accent-hover); }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 1rem;
+    }
+    .modal-backdrop.active { display: flex; }
+    .modal {
+      background: #0c2116;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      max-width: 440px;
+      width: 100%;
+      padding: 1.75rem;
+    }
+    .modal h2 { font-size: 1.25rem; margin-bottom: 0.35rem; }
+    .modal p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.15rem; }
+    .modal-actions { display: flex; gap: 0.75rem; margin-top: 0.5rem; }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+    }
+    .policies {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 5%;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .policies h3 { color: var(--text-main); font-size: 0.95rem; margin-bottom: 0.4rem; }
+    footer {
+      text-align: center;
+      padding: 1.5rem 5% 2.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="#" class="brand"><span>#</span>wadervibes</a>
+    <span class="nav-badge">Free Worldwide Shipping</span>
+  </header>
+
+  <section class="hero">
+    <h1>NO FILTER. JUST POV.</h1>
+    <p>Official custom-printed streetwear & footwear by <strong>@king_wader</strong>. Made to order and shipped worldwide with tracking.</p>
+  </section>
+
+  <main class="grid" id="product-grid"></main>
+
+  <section class="policies">
+    <div>
+      <h3>Made-to-Order Production</h3>
+      <p>Every piece is printed on demand after you order. Production takes 2–5 business days, followed by 7–15 business days tracked international delivery.</p>
+    </div>
+    <div>
+      <h3>Inner Neck Branding</h3>
+      <p>All apparel features clean outer silhouettes with the signature #wadervibes inner neck tag.</p>
+    </div>
+    <div>
+      <h3>Returns & Replacements</h3>
+      <p>Because items are custom-made per order, returns are accepted for manufacturing defects or damaged deliveries—replaced free of charge.</p>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 #wadervibes &bull; Official Store of @king_wader
+  </footer>
+
+  <!-- Checkout Modal -->
+  <div class="modal-backdrop" id="checkout-modal">
+    <div class="modal">
+      <h2 id="modal-item-title">Complete Order</h2>
+      <p id="modal-item-meta">Size: L &bull; $29.99 USD (Free Shipping)</p>
+      <form id="checkout-form">
+        <input type="text" id="cust-name" placeholder="Full Name" required />
+        <input type="email" id="cust-email" placeholder="Email Address (for tracking)" required />
+        <input type="text" id="cust-address" placeholder="Street Address & Apt/Suite" required />
+        <input type="text" id="cust-city" placeholder="City" required />
+        <div style="display:flex; gap:0.5rem;">
+          <input type="text" id="cust-state" placeholder="State / Province" required />
+          <input type="text" id="cust-zip" placeholder="Postal / ZIP Code" required />
+        </div>
+        <select id="cust-country" required>
+          <option value="US">United States (US)</option>
+          <option value="GB">United Kingdom (UK)</option>
+          <option value="CA">Canada (CA)</option>
+          <option value="DE">Germany (DE)</option>
+          <option value="AU">Australia (AU)</option>
+        </select>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn">Pay &amp; Order Now</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Replace with your live Paystack Public Key and deployed Backend Webhook URL
+    const PAYSTACK_PUBLIC_KEY = "pk_live_REPLACE_WITH_YOUR_PAYSTACK_PUBLIC_KEY";
+    const BACKEND_ORDER_URL = "https://your-backend.onrender.com/api/create-printify-order";
+
+    // Replace printify_product_id and variant_ids with your exact IDs from Printify API
+    const PRODUCTS = [
+      {
+        id: "okay-so-tee",
+        title: '#wadervibes "Okay. So?" Heavyweight Tee',
+        tag: "Neck-Tag Edition",
+        price: 29.99,
+        description: "Garment-dyed Comfort Colors 1717 heavyweight cotton. Blank chest, bold back statement, #wadervibes inner neck label.",
+        image: "", // Paste your Printify mockup image URL here
+        printify_product_id: "YOUR_PRINTIFY_PRODUCT_ID_1",
+        variants: [
+          { label: "Size S", variant_id: 1001 },
+          { label: "Size M", variant_id: 1002 },
+          { label: "Size L", variant_id: 1003 },
+          { label: "Size XL", variant_id: 1004 },
+          { label: "Size 2XL", variant_id: 1005 }
+        ]
+      },
+      {
+        id: "wader-low-kicks",
+        title: "#wadervibes Custom Low-Top Sneakers",
+        tag: "Footwear Drop",
+        price: 69.99,
+        description: "Custom all-over print canvas & synthetic leather low-tops with signature #wadervibes heel branding.",
+        image: "", // Paste your Printify mockup image URL here
+        printify_product_id: "YOUR_PRINTIFY_PRODUCT_ID_2",
+        variants: [
+          { label: "US Men 8 / Women 9.5", variant_id: 2001 },
+          { label: "US Men 9 / Women 10.5", variant_id: 2002 },
+          { label: "US Men 10 / Women 11.5", variant_id: 2003 },
+          { label: "US Men 11 / Women 12.5", variant_id: 2004 }
+        ]
+      },
+      {
+        id: "hot-seat-hoodie",
+        title: '#wadervibes "Hot Seat" Heavy Hoodie',
+        tag: "Limited Drop",
+        price: 54.99,
+        description: "420gsm fleece pullover hoodie with #wadervibes neck print and bold back POV typography.",
+        image: "", // Paste your Printify mockup image URL here
+        printify_product_id: "YOUR_PRINTIFY_PRODUCT_ID_3",
+        variants: [
+          { label: "Size S", variant_id: 3001 },
+          { label: "Size M", variant_id: 3002 },
+          { label: "Size L", variant_id: 3003 },
+          { label: "Size XL", variant_id: 3004 }
+        ]
+      }
+    ];
+
+    let selectedOrder = null;
+
+    function renderProducts() {
+      const grid = document.getElementById("product-grid");
+      grid.innerHTML = PRODUCTS.map((p, idx) => `
+        <article class="card">
+          <div class="card-img">
+            <span class="tag-pill">${p.tag}</span>
+            ${p.image ? `<img src="${p.image}" alt="${p.title}">` : `<span>Upload Printify Mockup</span>`}
+          </div>
+          <div class="card-body">
+            <h2 class="card-title">${p.title}</h2>
+            <p class="card-desc">${p.description}</p>
+            <div class="price-row">
+              <span class="price">$${p.price.toFixed(2)}</span>
+              <span class="shipping-note">Free Shipping</span>
+            </div>
+            <select id="size-${idx}">
+              ${p.variants.map(v => `<option value="${v.variant_id}">${v.label}</option>`).join("")}
+            </select>
+            <button class="btn" onclick="openCheckout(${idx})">Order Now</button>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function openCheckout(idx) {
+      const product = PRODUCTS[idx];
+      const select = document.getElementById(`size-${idx}`);
+      const variantId = parseInt(select.value, 10);
+      const variantLabel = select.options[select.selectedIndex].text;
+
+      selectedOrder = { product, variantId, variantLabel };
+      document.getElementById("modal-item-title").textContent = product.title;
+      document.getElementById("modal-item-meta").textContent = `${variantLabel} • $${product.price.toFixed(2)} USD (Free Shipping)`;
+      document.getElementById("checkout-modal").classList.add("active");
+    }
+
+    function closeModal() {
+      document.getElementById("checkout-modal").classList.remove("active");
+    }
+
+    document.getElementById("checkout-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      if (!selectedOrder) return;
+
+      const payload = {
+        product_id: selectedOrder.product.printify_product_id,
+        variant_id: selectedOrder.variantId,
+        price_usd: selectedOrder.product.price,
+        customer: {
+          name: document.getElementById("cust-name").value,
+          email: document.getElementById("cust-email").value,
+          address1: document.getElementById("cust-address").value,
+          city: document.getElementById("cust-city").value,
+          region: document.getElementById("cust-state").value,
+          zip: document.getElementById("cust-zip").value,
+          country: document.getElementById("cust-country").value
+        }
+      };
+
+      // Note: Include Paystack inline script (https://js.paystack.co/v1/inline.js) when hosting live
+      if (typeof PaystackPop !== "undefined") {
+        const handler = PaystackPop.setup({
+          key: PAYSTACK_PUBLIC_KEY,
+          email: payload.customer.email,
+          amount: Math.round(payload.price_usd * 100),
+          currency: "USD",
+          callback: async function (response) {
+            payload.payment_reference = response.reference;
+            await fetch(BACKEND_ORDER_URL, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+            });
+            alert("Order confirmed! Tracking will be emailed to " + payload.customer.email);
+            closeModal();
+          }
+        });
+        handler.openIframe();
+      } else {
+        alert("Storefront Preview Ready! Add your Paystack Public Key and deploy to activate live USD card checkout.");
+        closeModal();
+      }
+    });
+
+    renderProducts();
+  </script>
+</body>
+</html>
