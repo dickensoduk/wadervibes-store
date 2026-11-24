@@ -623,6 +623,30 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
   <script>
     const BACKEND_URL = "https://wadervibes-core.onrender.com";
     const PAYSTACK_PUBLIC_KEY = "pk_test_replace_with_your_paystack_key";
+const USD_TO_KES = 130;
+let currentCurrency = "KES";
+
+function formatPrice(usdAmount) {
+  const usd = Number(usdAmount || 0);
+  if (currentCurrency === "KES") {
+    const kes = Math.round((usd * USD_TO_KES) / 10) * 10;
+    return `KES ${kes.toLocaleString()}`;
+  }
+  return `$${usd.toFixed(2)} USD`;
+}
+
+function setCurrency(curr) {
+  currentCurrency = curr;
+  const btnKes = document.getElementById("btn-kes");
+  const btnUsd = document.getElementById("btn-usd");
+  if (btnKes && btnUsd) {
+    btnKes.style.background = curr === "KES" ? "#18b267" : "transparent";
+    btnKes.style.color = curr === "KES" ? "#04110a" : "#9eb3a7";
+    btnUsd.style.background = curr === "USD" ? "#18b267" : "transparent";
+    btnUsd.style.color = curr === "USD" ? "#04110a" : "#9eb3a7";
+  }
+  if (typeof renderProducts === "function") renderProducts();
+}
 
     const FALLBACK_PRODUCTS = [
       {
@@ -877,29 +901,5 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
 
     loadProducts();
   </script>
-  const BACKEND_URL = "https://wadervibes-core.onrender.com";
-const USD_TO_KES = 130;
-let currentCurrency = "KES";
-function formatPrice(usdAmount) {
-const usd = Number(usdAmount || 0);
-if (currentCurrency === "KES") {
-const kes = Math.round((usd * USD_TO_KES) / 10) * 10;
-return `KES ${kes.toLocaleString()}`;
-}
-return `$${usd.toFixed(2)} USD`;
-}
-function setCurrency(curr) {
-currentCurrency = curr;
-const btnKes = document.getElementById("btn-kes"
-  );
-const btnUsd = document.getElementById("btn-usd");
-if (btnKes && btnUsd) {
-btnKes.style.background = curr === "KES" ? "#18b267" : "transparent";
-btnKes.style.color = curr === "KES" ? "#04110a" : "#9eb3a7";
-btnUsd.style.background = curr === "USD" ? "#18b267" : "transparent";
-btnUsd.style.color = curr === "USD" ? "#04110a" : "#9eb3a7";
-}
-if (typeof renderProducts === "function") renderProducts();
-}
 </body>
 </html>
