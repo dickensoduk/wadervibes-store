@@ -717,7 +717,7 @@ function setCurrency(curr) {
         const sizes = Array.isArray(item.sizes) && item.sizes.length ? item.sizes : ["Standard"];
         const sizeOptions = sizes.map(s => `<option value="${s}">Size: ${s}</option>`).join("");
         const isAffiliate = item.fulfillment_type === "affiliate" && item.external_url;
-        const priceVal = Number(item.price_usd || item.price || 0).toFixed(2);
+        const priceVal = formatPrice(item.price_usd || item.price || 0);
         const badgeLabel = item.tag || (isAffiliate ? "Featured Plug" : "#wadervibes");
 
         const card = document.createElement("article");
