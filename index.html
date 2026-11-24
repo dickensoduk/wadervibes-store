@@ -950,6 +950,46 @@ function setCurrency(curr) {
 
   handler.openIframe();
 });
+document.getElementById("open-cancel-modal").addEventListener("click", () => {
+  document.getElementById("cancel-modal").classList.add("active");
+});
+
+document.getElementById("close-cancel-modal").addEventListener("click", () => {
+  document.getElementById("cancel-modal").classList.remove("active");
+});
+
+document.getElementById("cancel-order-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById("submit-cancel-btn");
+  const reference = document.getElementById("cancel-ref").value.trim();
+  const customerPhone = document.getElementById("cancel-phone").value.trim();
+
+  btn.disabled = true;
+  btn.textContent = "Cancelling...";
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/orders/cancel`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reference, customer_phone: customerPhone })
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error || "Could not cancel order.");
+    } else {
+      alert(data.message || `Order ${data.reference} has been cancelled.`);
+      document.getElementById("cancel-modal").classList.remove("active");
+      document.getElementById("cancel-order-form").reset();
+      loadProducts();
+    }
+  } catch (err) {
+    alert("Network error connecting to Wadervibes server.");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Cancel Order";
+  }
+});
 
 loadProducts();
 </script>
