@@ -359,7 +359,11 @@
       flex-wrap: wrap;
       gap: 0.6rem;
     }
-    .social-chip {
+        .social-chip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       text-decoration: none;
       color: var(--text-main);
       background: rgba(7, 19, 13, 0.85);
@@ -368,8 +372,87 @@
       border-radius: 10px;
       font-size: 0.82rem;
       font-weight: 700;
-      transition: border-color 0.2s ease, color 0.2s ease;
+      overflow: hidden;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
     }
+    .social-chip .chip-text {
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .social-chip .chip-logo {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      opacity: 0;
+      transform: scale(0.65);
+      transition: opacity 0.25s ease, transform 0.25s ease, filter 0.25s ease;
+      pointer-events: none;
+    }
+    .social-chip:hover,
+    .social-chip:active {
+      transform: translateY(-2px);
+    }
+    .social-chip:hover .chip-text,
+    .social-chip:active .chip-text {
+      opacity: 0;
+      transform: scale(0.85);
+    }
+    .social-chip:hover .chip-logo,
+    .social-chip:active .chip-logo {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Brand Border & Logo Glows */
+    .social-chip.tiktok:hover,
+    .social-chip.tiktok:active {
+      border-color: #00f2fe;
+      box-shadow: 0 0 14px rgba(0, 242, 254, 0.45), inset 0 0 8px rgba(254, 44, 85, 0.25);
+    }
+    .social-chip.tiktok:hover .chip-logo,
+    .social-chip.tiktok:active .chip-logo {
+      filter: drop-shadow(-1.5px 0 3px #00f2fe) drop-shadow(1.5px 0 3px #fe2c55);
+    }
+
+    .social-chip.instagram:hover,
+    .social-chip.instagram:active {
+      border-color: #e1306c;
+      box-shadow: 0 0 14px rgba(225, 48, 108, 0.45);
+    }
+    .social-chip.instagram:hover .chip-logo,
+    .social-chip.instagram:active .chip-logo {
+      filter: drop-shadow(0 0 6px #e1306c);
+    }
+
+    .social-chip.youtube:hover,
+    .social-chip.youtube:active {
+      border-color: #ff0000;
+      box-shadow: 0 0 14px rgba(255, 0, 0, 0.45);
+    }
+    .social-chip.youtube:hover .chip-logo,
+    .social-chip.youtube:active .chip-logo {
+      filter: drop-shadow(0 0 6px #ff0000);
+    }
+
+    .social-chip.x-twitter:hover,
+    .social-chip.x-twitter:active {
+      border-color: #ffffff;
+      box-shadow: 0 0 14px rgba(255, 255, 255, 0.4);
+    }
+    .social-chip.x-twitter:hover .chip-logo,
+    .social-chip.x-twitter:active .chip-logo {
+      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.85));
+    }
+
+    .social-chip.pinterest:hover,
+    .social-chip.pinterest:active {
+      border-color: #e60023;
+      box-shadow: 0 0 14px rgba(230, 0, 35, 0.45);
+    }
+    .social-chip.pinterest:hover .chip-logo,
+    .social-chip.pinterest:active .chip-logo {
+      filter: drop-shadow(0 0 6px #e60023);
+    }
+    
     .social-chip:hover {
       border-color: var(--accent);
       color: var(--accent);
