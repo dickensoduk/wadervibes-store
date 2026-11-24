@@ -732,7 +732,7 @@ function setCurrency(curr) {
             <h2 class="card-title">${item.title}</h2>
             <p class="card-desc">${item.description || "Official @king_wader drop."}</p>
             <div class="price-row">
-              <span class="price">$${priceVal}</span>
+              <span class="price">${priceVal}</span>
               <span class="shipping-note">${isAffiliate ? "Partner Direct" : "Nationwide Shipping Kenya"}</span>
             </div>
             ${isAffiliate ? "" : `<select id="size-${item.id}">${sizeOptions}</select>`}
@@ -757,7 +757,7 @@ function setCurrency(curr) {
           activeSize = sizeEl ? sizeEl.value : "Standard";
           const priceVal = Number(item.price_usd || item.price || 0).toFixed(2);
           document.getElementById("modal-item-title").textContent = item.title;
-          document.getElementById("modal-item-meta").textContent = `Option: ${activeSize} • $${priceVal} USD (Nationwide Shipping Kenya)`;
+          document.getElementById("modal-item-meta").textContent = `Option: ${activeSize} • ${priceVal} (Nationwide Shipping Kenya)`;
           updatePaymentEligibility();
           document.getElementById("checkout-modal").classList.add("active");
         });
