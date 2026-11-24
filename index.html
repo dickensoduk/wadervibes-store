@@ -618,6 +618,24 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
       </form>
     </div>
   </div>
+      <!-- Cancel Order Modal -->
+  <div class="modal-backdrop" id="cancel-modal">
+    <div class="modal">
+      <h3>Cancel Your Order</h3>
+      <p style="font-size:0.85rem;opacity:0.8;margin-bottom:12px;">
+        Enter your order reference and phone number from checkout. Paid M-Pesa/Card orders trigger an instant Paystack refund.
+      </p>
+      <form id="cancel-order-form">
+        <input type="text" id="cancel-ref" placeholder="Order Reference (e.g. POD-173... or PSK-...)" required />
+        <input type="tel" id="cancel-phone" placeholder="Phone Number (e.g. 0706695772)" required />
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="close-cancel-modal">Close</button>
+          <button type="submit" class="btn" id="submit-cancel-btn" style="background:#dc2626;color:#fff;">Cancel Order</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 
   <!-- Paystack Inline Checkout Script -->
   <script src="https://js.paystack.co/v1/inline.js"></script>
