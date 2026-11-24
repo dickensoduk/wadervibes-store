@@ -876,25 +876,27 @@ function setCurrency(curr) {
         return;
       }
 
-      const handler = PaystackPop.setup({
-        key: PAYSTACK_PUBLIC_KEY,
-        email: customer.email,
-        amount: Math.round(priceVal * 100),
-        currency: "USD",
-        channels: ["mobile_money", "card"],
-        metadata: {
-          product_id: activeProduct.id,
-          product_title: activeProduct.title,
-          size: activeSize,
-          payment_preference: "M-Pesa / Card",
-          customer
-        },
-        callback: function(response) {
-          document.getElementById("checkout-modal").classList.remove("active");
-          alert(`Payment successful! Reference: ${response.reference}. Your @king_wader order is being prepared for delivery to ${customer.state}.`);
-        },
-        onClose: function() {}
-      });
+      const kesAmount = Math.round((Number(priceVal || 0) * USD_TO_KES) / 10) * 10;
+
+const handler = PaystackPop.setup({
+  key: PAYSTACK_PUBLIC_KEY,
+  email: customer.email,
+  amount: kesAmount * 100,
+  currency: "KES",
+  channels: ["mobile_money", "card"],
+  metadata: {
+    product_id: activeProduct.id,
+    product_title: activeProduct.title,
+    size: activeSize,
+    payment_preference: "M-Pesa / Card",
+    customer
+  },
+  callback: function(response) {
+    document.getElementById("checkout-modal").classList.remove("active");
+    alert(`Payment successful! Reference: ${response.reference}. Your @king_wader order is being prepared for delivery.`);
+  },
+  onClose: function() {}
+});
 
       handler.openIframe();
     });
