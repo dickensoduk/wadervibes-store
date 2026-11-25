@@ -1441,7 +1441,6 @@ function setHeroStateSmooth(state, instant = false) {
 }
 
 async function updateHeroByWeather(isInitial = true) {
-async function updateHeroByWeather(isInitial = true) {
   const welcomeState = {
     text: "FINALLY! Welcome.",
     fontStyle: "normal",
@@ -1467,7 +1466,6 @@ async function updateHeroByWeather(isInitial = true) {
     const weatherData = await weatherRes.json();
     const temp = weatherData.current_weather.temperature;
 
-    // Hold initial crimson welcome for at least 3.5 seconds before transitioning
     if (isInitial) {
       const elapsed = Date.now() - loadStart;
       const waitMs = Math.max(0, 3500 - elapsed);
@@ -1518,9 +1516,6 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(() => updateHeroByWeather(false), 15 * 60 * 1000);
 });
 </script>
-
-    document.addEventListener('DOMContentLoaded', updateHeroByWeather);
-  </script>
   <script>
 const RATINGS_API_BASE = "https://wadervibes-core.onrender.com";
 let PRODUCT_RATINGS = {};
