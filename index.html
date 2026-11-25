@@ -988,7 +988,8 @@ function setCurrency(curr) {
   } catch (err) {
     ALL_PRODUCTS = [];
   }
-  renderProducts();
+    renderProducts();
+  if (typeof loadRatings === "function") loadRatings();
 }
 
   // Automatically sync when you switch back from /admin tab to the storefront
@@ -1503,7 +1504,10 @@ const RATINGS_API_BASE = "https://wadervibes-core.onrender.com";
 let PRODUCT_RATINGS = {};
 
 function getRatingPillHTML(productTitle) {
-  const info = PRODUCT_RATINGS[productTitle] || { count: 0, percent: 100 };
+    const matchedKey = Object.keys(PRODUCT_RATINGS).find(
+    k => k.trim().toLowerCase() === String(productTitle || "").trim().toLowerCase()
+  );
+  const info = (matchedKey ? PRODUCT_RATINGS[matchedKey] : null) || { count: 0, percent: 100 };
   const isUnlocked = info.count > 0;
   const label = isUnlocked ? `${info.percent}% (${info.count})` : "Rate Drop";
   return `
