@@ -1043,7 +1043,7 @@ function setCurrency(curr) {
       </div>
               <div class="card-body">
           <h2 class="card-title">${item.title}</h2>
-          ${!isAffiliate ? getRatingPillHTML(item.title) : ""}
+          ${!isAffiliate && typeof getRatingPillHTML === "function" ? getRatingPillHTML(item.title) : ""}
           <p class="card-desc">${item.description || "Official @king_wader drop."}</p>
           <div class="price-row">
           <span class="price">${priceVal}</span>
@@ -1401,172 +1401,131 @@ loadProducts();
 
     document.addEventListener('DOMContentLoaded', updateHeroByWeather);
   </script>
-    <script>
-    const API_BASE = 'https://onrender.com';
+  <script>
+const RATINGS_API_BASE = "https://onrender.com";
+let PRODUCT_RATINGS = {};
 
-    async function handleStarClick(productTitle, isUnlocked) {
-      if (!isUnlocked) {
-        alert('Stars unlock once your order is delivered!');
-        return;
-      }
-      const orderRef = prompt('Enter your Delivered Order Reference for ' + productTitle + ':');
-      if (!orderRef) return;
-      const stars = prompt('Rate 1 to 5 stars:', '5');
-      if (!stars) return;
-
-      const res = await fetch(API_BASE + '/api/ratings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ order_ref: orderRef, product_title: productTitle, stars: Number(stars) })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        alert('Thanks! Your rating is live.');
-        location.reload();
-      } else {
-        alert(data.error || 'Could not verify order.');
-      }
-    }
-
-    async function loadWaderComments() {
-      const list = document.getElementById('wader-comments-list');
-      if (!list) return;
-      try {
-        const res = await fetch(API_BASE + '/api/comments');
-        const comments = await res.json();
-        if (!comments.length) {
-          list.innerHTML = '<p style="color:#9eb5a7;font-size:0.85rem;">No comments yet — start the thread.</p>';
-          return;
-        }
-        list.innerHTML = comments.map(c => `
-          <div style="background: rgba(7, 19, 13, 0.75); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 0.85rem 1rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
-            <div>
-              <strong style="color: #7ef9d0; font-size: 0.88rem;">${c.customer_name}</strong>
-              <span style="color: #9eb5a7; font-size: 0.75rem; margin-left: 0.4rem;">• ${c.created_at}</span>
-              <p style="color: #f3f7f4; font-size: 0.9rem; margin-top: 0.25rem;">${c.comment}</p>
-            </div>
-            <div style="display: flex; gap: 0.55rem;">
-              <button class="react-btn" onclick="reactWaderComment(${c.id}, 'like', this)" aria-label="Thumbs up">
-                <svg viewBox="0 0 24 24"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>
-                <span>${c.likes}</span>
-              </button>
-              <button class="react-btn dislike-btn" onclick="reactWaderComment(${c.id}, 'dislike', this)" aria-label="Thumbs down">
-                <svg viewBox="0 0 24 24"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/></svg>
-                <span>${c.dislikes}</span>
-              </button>
-            </div>
-          </div>
-        `).join('');
-        } catch (e) {
-    list.innerHTML = '<p style="color:#ef4444;font-size:0.85rem;">Could not reach server. Refresh to retry.</p>';
-  }
+function getRatingPillHTML(productTitle) {
+  const info = PRODUCT_RATINGS[productTitle] || { count: 0, percent: 100 };
+  const isUnlocked = info.count > 0;
+  const label = isUnlocked ? `${info.percent}% (${info.count})` : "Rate Drop";
+  return `
+    <div onclick="handleStarClick('${String(productTitle).replace(/'/g, "\\'")}', ${isUnlocked})"
+         style="display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;cursor:pointer;font-size:12px;color:#7ef9d0;font-weight:700;">
+      <span style="letter-spacing:1px;font-size:14px;">${isUnlocked ? "★★★★★" : "☆☆☆☆☆"}</span>
+      <span>${label}</span>
+    </div>
+  `;
 }
 
-async function postWaderComment(e) {
-  e.preventDefault();
-  const customer_name = document.getElementById('c-name').value.trim();
-  const comment = document.getElementById('c-text').value.trim();
-  if (!customer_name || !comment) return;
-
+async function loadRatings() {
   try {
-    const res = await fetch(API_BASE + '/api/comments', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ customer_name, comment })
-    });
+    const res = await fetch(`${RATINGS_API_BASE}/api/ratings`);
     if (res.ok) {
-      document.getElementById('c-text').value = '';
-      loadWaderComments();
-    } else {
-      const err = await res.json().catch(() => ({}));
-      alert(err.error || 'Server error: ' + res.status);
+      PRODUCT_RATINGS = await res.json();
+      if (typeof renderProducts === "function") renderProducts();
     }
   } catch (err) {
-    alert('Cannot reach Render server. Make sure wadervibes-core is live.');
+    console.warn("Ratings load failed:", err);
   }
 }
 
- async function reactWaderComment(id, type, btn) {
-    const key = 'wader_voted_' + id;
-    if (localStorage.getItem(key)) return;
-    const res = await fetch(API_BASE + '/api/comments/' + id + '/react', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+async function handleStarClick(productTitle, isUnlocked) {
+  const orderRef = prompt("Enter your Delivered Order Reference for " + productTitle + ":");
+  if (!orderRef) return;
+  const stars = prompt("Rate 1 to 5 stars:", "5");
+  if (!stars) return;
+
+  try {
+    const res = await fetch(`${RATINGS_API_BASE}/api/ratings`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        order_ref: orderRef.trim(),
+        product_title: productTitle,
+        stars: Number(stars)
+      })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      alert("Thanks! Your rating is live.");
+      loadRatings();
+    } else {
+      alert(data.error || "Stars unlock once your order is Delivered!");
+    }
+  } catch (err) {
+    alert("Network error submitting rating.");
+  }
+}
+
+async function loadComments() {
+  const listEl = document.getElementById("comments-list");
+  if (!listEl) return;
+  try {
+    const res = await fetch(`${RATINGS_API_BASE}/api/comments`);
+    if (!res.ok) return;
+    const rows = await res.json();
+    listEl.innerHTML = rows.length
+      ? rows.map(c => `
+          <div style="background:#04110a;border:1px solid #163b27;border-radius:10px;padding:10px 12px;margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:#7ef9d0;font-weight:700;margin-bottom:4px;">
+              <span>${c.customer_name}</span>
+              <span style="color:#9eb5a7;font-weight:400;">${c.created_at || ""}</span>
+            </div>
+            <div style="font-size:13px;color:#e8f5ee;margin-bottom:6px;">${c.comment}</div>
+            <div style="display:flex;gap:12px;font-size:12px;">
+              <button type="button" onclick="reactComment(${c.id}, 'like')" style="background:none;border:none;color:#9eb5a7;cursor:pointer;padding:0;">👍 ${c.likes || 0}</button>
+              <button type="button" onclick="reactComment(${c.id}, 'dislike')" style="background:none;border:none;color:#9eb5a7;cursor:pointer;padding:0;">👎🏽 ${c.dislikes || 0}</button>
+            </div>
+          </div>
+        `).join("")
+      : `<div style="color:#9eb5a7;font-size:13px;">No drop talk yet. Be the first to post!</div>`;
+  } catch (err) {
+    console.warn("Comments load failed:", err);
+  }
+}
+
+async function reactComment(id, type) {
+  try {
+    const res = await fetch(`${RATINGS_API_BASE}/api/comments/${id}/react`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ type })
     });
-    if (res.ok) {
-      const counts = await res.json();
-      localStorage.setItem(key, type);
-            const parent = btn.parentElement;
-      const spans = parent.querySelectorAll('span');
-      if (spans[0]) spans[0].textContent = counts.likes;
-      if (spans[1]) spans[1].textContent = counts.dislikes;
-    }
-  }
+    if (res.ok) loadComments();
+  } catch (err) {}
+}
 
-  let PRODUCT_RATINGS = {};
+document.addEventListener("DOMContentLoaded", () => {
+  loadRatings();
+  loadComments();
 
-  async function loadProductRatings() {
-    try {
-      const res = await fetch(API_BASE + '/api/ratings');
-      if (res.ok) {
-        PRODUCT_RATINGS = await res.json();
-        if (typeof renderProducts === 'function') renderProducts();
+  const commentForm = document.getElementById("comment-form");
+  if (commentForm) {
+    commentForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const nameInput = document.getElementById("comment-name");
+      const textInput = document.getElementById("comment-text");
+      const customer_name = (nameInput?.value || "").trim();
+      const comment = (textInput?.value || "").trim();
+      if (!customer_name || !comment) return;
+
+      try {
+        const res = await fetch(`${RATINGS_API_BASE}/api/comments`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ customer_name, comment })
+        });
+        if (res.ok) {
+          if (textInput) textInput.value = "";
+          loadComments();
+        }
+      } catch (err) {
+        alert("Could not post comment right now.");
       }
-    } catch (e) {}
+    });
   }
-
-  function getRatingPillHTML(productTitle) {
-    const info = PRODUCT_RATINGS[productTitle] || { count: 0, percent: 100 };
-    const filled = Math.round((info.percent / 100) * 5);
-    const stars = '★'.repeat(filled) + '☆'.repeat(5 - filled);
-    const text = info.count > 0 ? `${info.percent}% (${info.count})` : `100% • Rate`;
-    const safeTitle = productTitle.replace(/'/g, "\\'");
-    return `
-      <div class="product-rating-pill" onclick="rateDeliveredProduct('${safeTitle}')" style="cursor:pointer;">
-        <span style="color:#25e080;letter-spacing:1px;">${stars}</span>
-        <span style="color:#bbf7d0;font-size:0.8rem;font-weight:700;">${text}</span>
-      </div>
-    `;
-  }
-
-  async function rateDeliveredProduct(productTitle) {
-    const order_ref = prompt(`Rate "${productTitle}"\n\nEnter your Order Reference (only Delivered orders for this exact product can rate):`);
-    if (!order_ref || !order_ref.trim()) return;
-
-    const rawStars = prompt(`Enter your star rating for "${productTitle}" (1 to 5):`, "5");
-    const stars = parseInt(rawStars, 10);
-    if (!stars || stars < 1 || stars > 5) {
-      alert("Please enter a valid number from 1 to 5.");
-      return;
-    }
-
-    try {
-      const res = await fetch(API_BASE + '/api/ratings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          product_title: productTitle,
-          order_ref: order_ref.trim(),
-          stars
-        })
-      });
-      const data = await res.json().catch(() => ({}));
-      if (res.ok) {
-        alert("Thank you! Your verified rating has been posted.");
-        loadProductRatings();
-      } else {
-        alert(data.error || "Stars unlock only after this exact product is Delivered!");
-      }
-    } catch (err) {
-      alert("Could not reach server. Try again shortly.");
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    loadWaderComments();
-    loadProductRatings();
-  });
+});
 </script>
 </body>
 </html>
