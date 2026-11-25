@@ -1597,20 +1597,6 @@ document.addEventListener("DOMContentLoaded", () => {
   loadRatings();
   loadComments();
 
-    if (res.ok) {
-      if (textInput) textInput.value = "";
-      if (typeof loadComments === "function") await loadComments();
-    } else {
-      alert("Server error " + res.status);
-    }
-  } catch (err) {
-    alert("Could not reach backend: " + err.message);
-  } finally {
-    if (btn) {
-      btn.disabled = false;
-      btn.textContent = "Post";
-    }
-  }
 }
 </script>
   <script>
@@ -1632,7 +1618,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const res = await fetch("https://onrender.com", {
+      const res = await fetch("https://wadervibes-core.onrender.com/api/comments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ customer_name, comment })
