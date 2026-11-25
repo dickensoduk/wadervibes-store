@@ -1207,10 +1207,12 @@ loadProducts();
         const weatherData = await weatherRes.json();
         const temp = weatherData.current_weather.temperature;
 
-        if (temp < 24) {
+                if (temp < 20) {
           heroTitle.textContent = "DAMN! YOU'RE COOL.";
+        } else if (temp <= 25) {
+          heroTitle.textContent = "YOU KINDA CHILL.";
         } else {
-          heroTitle.textContent = "OKAY! HOTTY.";
+          heroTitle.textContent = "OKAY HOTTY.";
         }
       } catch (err) {
         console.warn('Weather check failed:', err);
