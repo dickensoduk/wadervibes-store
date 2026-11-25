@@ -943,12 +943,15 @@ function setCurrency(curr) {
     let activeSize = null;
     let selectedPayMethod = "mpesa";
 
-    function inferCategory(item) {
-      if (item.category) return item.category.toLowerCase();
+        function inferCategory(item) {
+      const cat = (item.category || "").trim().toLowerCase();
+      if (cat && cat !== "all drops" && cat !== "all") return cat;
       const text = ((item.title || "") + " " + (item.tag || "")).toLowerCase();
-      if (item.fulfillment_type === "affiliate" || item.external_url) return "plugs";
-      if (text.includes("shoe") || text.includes("sneaker") || text.includes("slide") || text.includes("kick") || text.includes("jordan") || text.includes("air force")) return "kicks";
-      return "apparel";
+      if (text.includes("shoe") || text.includes("sneaker") || text.includes("slide") || text.includes("kick") || text.includes("footwear")) return "kicks & slides";
+      if (text.includes("hoodie") || text.includes("jacket") || text.includes("outerwear") || text.includes("sweater")) return "hoodies & outerwear";
+      if (text.includes("tee") || text.includes("shirt") || text.includes("top")) return "tees & tops";
+      if (text.includes("pant") || text.includes("cargo") || text.includes("short") || text.includes("trouser")) return "bottoms & cargos";
+      return "accessories & scarves";
     }
 
     async function loadProducts() {
