@@ -913,11 +913,12 @@ function setCurrency(curr) {
       activeProduct = item;
       const sizeEl = document.getElementById(`size-${item.id}`);
       activeSize = sizeEl ? sizeEl.value : "Standard";
-      const priceVal = formatPrice(item.price_usd || item.price || 0);
-      document.getElementById("modal-item-title").textContent = item.title;
-      document.getElementById("modal-item-meta").textContent = `Option: ${activeSize} • ${priceVal} (Nationwide Shipping)`;
-      updatePaymentEligibility();
-      document.getElementById("checkout-modal").classList.add("active");
+        const qtyInput = document.getElementById("cust-qty");
+        if (qtyInput) qtyInput.value = 1;
+        document.getElementById("modal-item-title").textContent = item.title;
+        refreshCheckoutSummary();
+        updatePaymentEligibility();
+        document.getElementById("checkout-modal").classList.add("active");
     });
   });
 }
