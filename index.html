@@ -1207,19 +1207,24 @@ loadProducts();
         const weatherData = await weatherRes.json();
         const temp = weatherData.current_weather.temperature;
 
-        if (temp < 18) {
+                if (temp < 18) {
           heroTitle.textContent = "DAMN! YOU'RE COOL.";
           heroTitle.style.color = "#7dd3fc";
+          heroTitle.style.webkitTextFillColor = "#7dd3fc";
         } else if (temp <= 22) {
           heroTitle.textContent = "YOU KINDA CHILL.";
           heroTitle.style.color = "#7ef9d0";
+          heroTitle.style.webkitTextFillColor = "#7ef9d0";
         } else if (temp <= 26) {
           heroTitle.textContent = "FINALLY! Welcome.";
           heroTitle.style.color = "#f3f7f4";
+          heroTitle.style.webkitTextFillColor = "#f3f7f4";
         } else {
           heroTitle.textContent = "OKAY! HOTTY.";
           heroTitle.style.color = "#fcd34d";
-                }
+          heroTitle.style.webkitTextFillColor = "#fcd34d";
+        }
+        
       } catch (err) {
         console.warn('Weather check failed:', err);
       }
