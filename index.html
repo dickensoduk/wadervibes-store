@@ -1026,10 +1026,11 @@ function setCurrency(curr) {
         <span class="tag-pill">${badgeLabel}</span>
         ${item.image_url ? `<img src="${item.image_url}" alt="${item.title}" />` : `<span>#wadervibes</span>`}
       </div>
-      <div class="card-body">
-        <h2 class="card-title">${item.title}</h2>
-        <p class="card-desc">${item.description || "Official @king_wader drop."}</p>
-        <div class="price-row">
+              <div class="card-body">
+          <h2 class="card-title">${item.title}</h2>
+          ${!isAffiliate ? getRatingPillHTML(item.title) : ""}
+          <p class="card-desc">${item.description || "Official @king_wader drop."}</p>
+          <div class="price-row">
           <span class="price">${priceVal}</span>
           <span class="shipping-note">${
             isAffiliate
@@ -1481,14 +1482,76 @@ async function postWaderComment(e) {
     if (res.ok) {
       const counts = await res.json();
       localStorage.setItem(key, type);
-      const parent = btn.parentElement;
+            const parent = btn.parentElement;
       const spans = parent.querySelectorAll('span');
-      if (spans) spans.textContent = counts.likes;
-      if (spans) spans.textContent = counts.dislikes;
+      if (spans[0]) spans[0].textContent = counts.likes;
+      if (spans[1]) spans[1].textContent = counts.dislikes;
     }
   }
 
-    document.addEventListener('DOMContentLoaded', loadWaderComments);
-  </script>
+  let PRODUCT_RATINGS = {};
+
+  async function loadProductRatings() {
+    try {
+      const res = await fetch(API_BASE + '/api/ratings');
+      if (res.ok) {
+        PRODUCT_RATINGS = await res.json();
+        if (typeof renderProducts === 'function') renderProducts();
+      }
+    } catch (e) {}
+  }
+
+  function getRatingPillHTML(productTitle) {
+    const info = PRODUCT_RATINGS[productTitle] || { count: 0, percent: 100 };
+    const filled = Math.round((info.percent / 100) * 5);
+    const stars = '★'.repeat(filled) + '☆'.repeat(5 - filled);
+    const text = info.count > 0 ? `${info.percent}% (${info.count})` : `100% • Rate`;
+    const safeTitle = productTitle.replace(/'/g, "\\'");
+    return `
+      <div class="product-rating-pill" onclick="rateDeliveredProduct('${safeTitle}')" style="cursor:pointer;">
+        <span style="color:#25e080;letter-spacing:1px;">${stars}</span>
+        <span style="color:#bbf7d0;font-size:0.8rem;font-weight:700;">${text}</span>
+      </div>
+    `;
+  }
+
+  async function rateDeliveredProduct(productTitle) {
+    const order_ref = prompt(`Rate "${productTitle}"\n\nEnter your Order Reference (only Delivered orders for this exact product can rate):`);
+    if (!order_ref || !order_ref.trim()) return;
+
+    const rawStars = prompt(`Enter your star rating for "${productTitle}" (1 to 5):`, "5");
+    const stars = parseInt(rawStars, 10);
+    if (!stars || stars < 1 || stars > 5) {
+      alert("Please enter a valid number from 1 to 5.");
+      return;
+    }
+
+    try {
+      const res = await fetch(API_BASE + '/api/ratings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product_title: productTitle,
+          order_ref: order_ref.trim(),
+          stars
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        alert("Thank you! Your verified rating has been posted.");
+        loadProductRatings();
+      } else {
+        alert(data.error || "Stars unlock only after this exact product is Delivered!");
+      }
+    } catch (err) {
+      alert("Could not reach server. Try again shortly.");
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadWaderComments();
+    loadProductRatings();
+  });
+</script>
 </body>
 </html>
