@@ -1611,12 +1611,14 @@ document.addEventListener("DOMContentLoaded", () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ customer_name, comment })
         });
-        if (res.ok) {
-          if (textInput) textInput.value = "";
-          loadComments();
-        }
-      } catch (err) {
-        alert("Could not post comment right now.");
+            if (res.ok) {
+      if (textInput) textInput.value = "";
+      loadComments();
+    } else {
+      alert("Server error " + res.status + " — redeploy backend on Render.");
+    }
+  } catch (err) {
+    alert("Backend waking up — wait 15s and tap Post again.");
       }
   }
 
