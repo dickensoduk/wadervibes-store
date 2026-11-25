@@ -1207,26 +1207,26 @@ loadProducts();
         const weatherData = await weatherRes.json();
         const temp = weatherData.current_weather.temperature;
 
-        if (temp < 18) {
+                if (temp < 18) {
           heroTitle.textContent = "DAMN! YOU'RE COOL.";
           heroTitle.style.color = "#7dd3fc";
           heroTitle.style.webkitTextFillColor = "#7dd3fc";
-          document.body.style.background = "radial-gradient(circle at 50% 0%, rgba(125, 211, 252, 0.16) 0%, #07130d 55%)";
+          document.body.style.background = "radial-gradient(ellipse 80% 38% at 50% 0%, #103242 0%, #07130d 75%)";
         } else if (temp <= 22) {
           heroTitle.textContent = "YOU KINDA CHILL.";
           heroTitle.style.color = "#7ef9d0";
           heroTitle.style.webkitTextFillColor = "#7ef9d0";
-          document.body.style.background = "radial-gradient(circle at 50% 0%, rgba(126, 249, 208, 0.16) 0%, #07130d 55%)";
+          document.body.style.background = "radial-gradient(ellipse 80% 38% at 50% 0%, #0f3829 0%, #07130d 75%)";
         } else if (temp <= 26) {
           heroTitle.textContent = "FINALLY! Welcome.";
           heroTitle.style.color = "#f3f7f4";
           heroTitle.style.webkitTextFillColor = "#f3f7f4";
-          document.body.style.background = "radial-gradient(circle at 50% 0%, rgba(29, 178, 103, 0.18) 0%, #07130d 55%)";
+          document.body.style.background = "radial-gradient(ellipse 80% 38% at 50% 0%, #0f3822 0%, #07130d 75%)";
         } else {
           heroTitle.textContent = "OKAY! HOTTY.";
           heroTitle.style.color = "#fcd34d";
           heroTitle.style.webkitTextFillColor = "#fcd34d";
-          document.body.style.background = "radial-gradient(circle at 50% 0%, rgba(252, 211, 77, 0.16) 0%, #07130d 55%)";
+          document.body.style.background = "radial-gradient(ellipse 80% 38% at 50% 0%, #36290c 0%, #07130d 75%)";
         }
       } catch (err) {
         console.warn('Weather check failed:', err);
