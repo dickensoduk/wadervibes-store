@@ -1207,7 +1207,7 @@ loadProducts();
         const weatherData = await weatherRes.json();
         const temp = weatherData.current_weather.temperature;
 
-                if (temp < 18) {
+        if (temp < 18) {
           heroTitle.textContent = "DAMN! YOU'RE COOL.";
           heroTitle.style.color = "#7dd3fc";
         } else if (temp <= 22) {
