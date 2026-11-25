@@ -1440,25 +1440,34 @@ loadProducts();
             </div>
           </div>
         `).join('');
-      } catch (e) {
-        list.innerHTML = '<p style="color:#9eb5a7;font-size:0.85rem;">Loading community feed...</p>';
-      }
-    }
+        } catch (e) {
+    list.innerHTML = '<p style="color:#ef4444;font-size:0.85rem;">Could not reach server. Refresh to retry.</p>';
+  }
+}
 
-    async function postWaderComment(e) {
-      e.preventDefault();
-      const customer_name = document.getElementById('c-name').value;
-      const comment = document.getElementById('c-text').value;
-      const res = await fetch(API_BASE + '/api/comments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customer_name, comment })
-      });
-      if (res.ok) {
-        document.getElementById('c-text').value = '';
-        loadWaderComments();
-      }
+async function postWaderComment(e) {
+  e.preventDefault();
+  const customer_name = document.getElementById('c-name').value.trim();
+  const comment = document.getElementById('c-text').value.trim();
+  if (!customer_name || !comment) return;
+
+  try {
+    const res = await fetch(API_BASE + '/api/comments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customer_name, comment })
+    });
+    if (res.ok) {
+      document.getElementById('c-text').value = '';
+      loadWaderComments();
+    } else {
+      const err = await res.json().catch(() => ({}));
+      alert(err.error || 'Server error: ' + res.status);
     }
+  } catch (err) {
+    alert('Cannot reach Render server. Make sure wadervibes-core is live.');
+  }
+}
 
     async function reactWaderComment(id, type, btn) {
       const key = 'wader_voted_' + id;
