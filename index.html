@@ -1064,7 +1064,8 @@ function setCurrency(curr) {
   const city = document.getElementById("cust-city").value.trim();
   const county = document.getElementById("cust-county").value;
 
-  const priceVal = Number(activeProduct.price_usd || activeProduct.price || 0);
+        const { finalTotalUsd, orderTitle } = getCheckoutTotals();
+      const priceVal = finalTotalUsd;
 
   // 1. Handle Pay on Delivery for Kisumu & Nairobi
   if (selectedPayMethod === "pod") {
@@ -1078,7 +1079,7 @@ function setCurrency(curr) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           product_id: activeProduct.id,
-          product_title: activeProduct.title,
+          product_title: orderTitle,
           size: activeSize,
           amount_usd: priceVal,
           customer_name: customerName,
@@ -1127,7 +1128,7 @@ function setCurrency(curr) {
     channels: ["mobile_money", "card"],
     metadata: {
       product_id: activeProduct.id,
-      product_title: activeProduct.title,
+      product_title: orderTitle,
       size: activeSize,
       customer_name: customerName,
       customer_phone: customerPhone,
