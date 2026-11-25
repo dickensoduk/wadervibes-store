@@ -1468,7 +1468,7 @@ async function updateHeroByWeather(isInitial = true) {
 
     if (isInitial) {
       const elapsed = Date.now() - loadStart;
-      const waitMs = Math.max(0, 3500 - elapsed);
+      const waitMs = Math.max(0, 7000 - elapsed);
       await new Promise(resolve => setTimeout(resolve, waitMs));
     }
 
