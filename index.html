@@ -1480,9 +1480,10 @@ async function postWaderComment(e) {
       if (res.ok) {
         const counts = await res.json();
         localStorage.setItem(key, type);
-        const parent = btn.parentElement;
-        parent.children.querySelector('span').textContent = counts.likes;
-        parent.children.querySelector('span').textContent = counts.dislikes;
+            const parent = btn.parentElement;
+    const spans = parent.querySelectorAll('span');
+    if (spans[0]) spans[0].textContent = counts.likes;
+    if (spans[1]) spans[1].textContent = counts.dislikes;
       }
     }
 
