@@ -693,6 +693,17 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
       <h2 id="modal-item-title">Complete Order</h2>
       <p id="modal-item-meta">Size: L &bull; $29.99 USD (Nationwide Shipping Kenya)</p>
       <form id="checkout-form">
+                <!-- Quantity & Distance/Free Delivery Banner -->
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; padding:10px 12px; border-radius:10px; background:rgba(7,19,13,0.85); border:1px solid var(--border);">
+          <label for="cust-qty" style="font-size:0.85rem; font-weight:700; color:var(--text-main);">Quantity</label>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button type="button" onclick="changeOrderQty(-1)" style="width:30px; height:30px; border-radius:8px; border:1px solid var(--border); background:#0d2618; color:#fff; font-weight:800; cursor:pointer;">−</button>
+            <input type="number" id="cust-qty" value="1" min="1" max="10" readonly style="width:42px; text-align:center; background:transparent; border:none; color:#fff; font-weight:800; font-size:0.95rem;" />
+            <button type="button" onclick="changeOrderQty(1)" style="width:30px; height:30px; border-radius:8px; border:1px solid var(--border); background:#0d2618; color:#fff; font-weight:800; cursor:pointer;">+</button>
+          </div>
+        </div>
+        <div id="delivery-banner" style="font-size:0.8rem; padding:8px 12px; border-radius:8px; margin-bottom:12px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.35); color:#bbf7d0;"></div>
+
         <input type="text" id="cust-name" placeholder="Full Name" required />
         <input type="tel" id="cust-phone" placeholder="M-Pesa / WhatsApp Phone (e.g. 0712 345 678)" required />
         <input type="email" id="cust-email" placeholder="Email Address (for receipt & tracking)" required />
@@ -956,7 +967,10 @@ function setCurrency(curr) {
       updatePaymentEligibility();
     });
 
-    document.getElementById("cust-county").addEventListener("change", updatePaymentEligibility);
+        document.getElementById("cust-county").addEventListener("change", () => {
+      updatePaymentEligibility();
+      refreshCheckoutSummary();
+    });
 
     document.querySelectorAll("#category-pills .pill-btn").forEach(btn => {
       btn.addEventListener("click", () => {
