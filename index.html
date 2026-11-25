@@ -1441,23 +1441,19 @@ function setHeroStateSmooth(state, instant = false) {
 }
 
 async function updateHeroByWeather(isInitial = true) {
+async function updateHeroByWeather(isInitial = true) {
   const welcomeState = {
     text: "FINALLY! Welcome.",
     fontStyle: "normal",
     fontSize: "clamp(1.75rem, 4.5vw, 3.1rem)",
-<script>
-async function updateHeroByWeather() {
-  const heroTitle = document.getElementById('hero-title');
-  if (!heroTitle) return;
+    stroke: "#ff4d6d",
+    shadow: "drop-shadow(0 0 14px rgba(220, 38, 38, 0.55))",
+    bg: "radial-gradient(ellipse 80% 38% at 50% 0%, #2b0b12 0%, #07130d 75%)"
+  };
 
-  // Enforce upright, slightly smaller crimson welcome on load
-  heroTitle.textContent = "FINALLY! Welcome.";
-  heroTitle.style.fontStyle = "normal";
-  heroTitle.style.fontSize = "clamp(1.75rem, 4.5vw, 3.1rem)";
-  heroTitle.style.webkitTextStrokeColor = "#ff4d6d";
-  heroTitle.style.filter = "drop-shadow(0 0 14px rgba(220, 38, 38, 0.55))";
-  document.body.style.transition = "background 0.9s ease";
-  document.body.style.background = "radial-gradient(ellipse 80% 38% at 50% 0%, #2b0b12 0%, #07130d 75%)";
+  if (isInitial) {
+    setHeroStateSmooth(welcomeState, true);
+  }
 
   const loadStart = Date.now();
 
@@ -1471,47 +1467,54 @@ async function updateHeroByWeather() {
     const weatherData = await weatherRes.json();
     const temp = weatherData.current_weather.temperature;
 
-    // Wait remaining time so crimson welcome glows for at least 3.5 seconds (3500ms)
-    const elapsed = Date.now() - loadStart;
-    const waitMs = Math.max(0, 3500 - elapsed);
-    await new Promise(resolve => setTimeout(resolve, waitMs));
+    // Hold initial crimson welcome for at least 3.5 seconds before transitioning
+    if (isInitial) {
+      const elapsed = Date.now() - loadStart;
+      const waitMs = Math.max(0, 3500 - elapsed);
+      await new Promise(resolve => setTimeout(resolve, waitMs));
+    }
+
+    let targetState = welcomeState;
 
     if (temp < 16) {
-      heroTitle.textContent = "DAMN! YOU'RE COOL.";
-      heroTitle.style.fontSize = "";
-      heroTitle.style.webkitTextStrokeColor = "#7dd3fc";
-      heroTitle.style.filter = "drop-shadow(0 0 14px rgba(125, 211, 252, 0.4))";
-      document.body.style.background = "radial-gradient(ellipse 80% 38% at 50% 0%, #103242 0%, #07130d 75%)";
+      targetState = {
+        text: "DAMN! YOU'RE COOL.",
+        fontStyle: "normal",
+        fontSize: "",
+        stroke: "#7dd3fc",
+        shadow: "drop-shadow(0 0 14px rgba(125, 211, 252, 0.4))",
+        bg: "radial-gradient(ellipse 80% 38% at 50% 0%, #103242 0%, #07130d 75%)"
+      };
     } else if (temp <= 22) {
-      heroTitle.textContent = "YOU KINDA CHILL.";
-      heroTitle.style.fontSize = "";
-      heroTitle.style.webkitTextStrokeColor = "#7ef9d0";
-      heroTitle.style.filter = "drop-shadow(0 0 14px rgba(126, 249, 208, 0.4))";
-      document.body.style.background = "radial-gradient(ellipse 80% 38% at 50% 0%, #0f3829 0%, #07130d 75%)";
+      targetState = {
+        text: "YOU KINDA CHILL.",
+        fontStyle: "normal",
+        fontSize: "",
+        stroke: "#7ef9d0",
+        shadow: "drop-shadow(0 0 14px rgba(126, 249, 208, 0.4))",
+        bg: "radial-gradient(ellipse 80% 38% at 50% 0%, #0f3829 0%, #07130d 75%)"
+      };
     } else if (temp <= 26) {
-      heroTitle.textContent = "FINALLY! Welcome.";
-      heroTitle.style.fontStyle = "normal";
-      heroTitle.style.fontSize = "clamp(1.75rem, 4.5vw, 3.1rem)";
-      heroTitle.style.webkitTextStrokeColor = "#ff4d6d";
-      heroTitle.style.filter = "drop-shadow(0 0 14px rgba(220, 38, 38, 0.55))";
-      document.body.style.background = "radial-gradient(ellipse 80% 38% at 50% 0%, #2b0b12 0%, #07130d 75%)";
+      targetState = welcomeState;
     } else {
-      heroTitle.textContent = "OKAY! HOTTY.";
-      heroTitle.style.fontSize = "";
-      heroTitle.style.webkitTextStrokeColor = "#fcd34d";
-      heroTitle.style.filter = "drop-shadow(0 0 14px rgba(252, 211, 77, 0.4))";
-      document.body.style.background = "radial-gradient(ellipse 80% 38% at 50% 0%, #36290c 0%, #07130d 75%)";
+      targetState = {
+        text: "OKAY! HOTTY.",
+        fontStyle: "normal",
+        fontSize: "",
+        stroke: "#fcd34d",
+        shadow: "drop-shadow(0 0 14px rgba(252, 211, 77, 0.4))",
+        bg: "radial-gradient(ellipse 80% 38% at 50% 0%, #36290c 0%, #07130d 75%)"
+      };
     }
+
+    setHeroStateSmooth(targetState, false);
   } catch (err) {
     console.warn('Weather check failed:', err);
   }
 }
 
-document.addEventListener('DOMContentLoaded', updateHeroByWeather);
-</script>
-
+document.addEventListener('DOMContentLoaded', () => {
   updateHeroByWeather(true);
-  // Smoothly re-check weather every 15 minutes if tab stays open
   setInterval(() => updateHeroByWeather(false), 15 * 60 * 1000);
 });
 </script>
