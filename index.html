@@ -961,48 +961,63 @@ function setCurrency(curr) {
     let activeSize = null;
     let selectedPayMethod = "mpesa";
 
-      function inferCategory(item) {
-      const cat = (item.category || "").trim().toLowerCase();
-      if (cat && cat !== "all drops" && cat !== "all") return cat;
-      const text = ((item.title || "") + " " + (item.tag || "")).toLowerCase();
-      if (text.includes("shoe") || text.includes("sneaker") || text.includes("slide") || text.includes("kick")) return "kicks & slides";
-      if (text.includes("hoodie") || text.includes("jacket") || text.includes("outerwear")) return "hoodies & outerwear";
-      if (text.includes("tee") || text.includes("shirt") || text.includes("top")) return "tees & tops";
-      if (text.includes("pant") || text.includes("cargo") || text.includes("short")) return "bottoms & cargos";
-      return "accessories & scarves";
+    function inferCategory(item) {
+    const rawCat = (item.category || "").trim().toLowerCase();
+    if (rawCat && rawCat !== "all drops" && rawCat !== "all") {
+      return rawCat;
     }
+    const text = `${item.title || ""} ${item.description || ""} ${item.tag || ""}`.toLowerCase();
+    if (text.includes("shoe") || text.includes("sneaker") || text.includes("slide") || text.includes("kick")) return "shoes";
+    if (text.includes("hoodie") || text.includes("jacket") || text.includes("outerwear")) return "hoodies & outerwear";
+    if (text.includes("tee") || text.includes("shirt") || text.includes("top")) return "tees & tops";
+    if (text.includes("pant") || text.includes("cargo") || text.includes("short")) return "bottoms & cargos";
+    return "accessories & scarves";
+  }
 
-    async function loadProducts() {
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/products`);
-        if (!res.ok) throw new Error("Failed to fetch products");
-        const data = await res.json();
-        const list = Array.isArray(data) ? data : (data.products || []);
-        ALL_PRODUCTS = list.length > 0 ? list : FALLBACK_PRODUCTS;
-      } catch (err) {
+  async function loadProducts() {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/products?t=${Date.now()}`, {
+        cache: "no-store"
+      });
+      if (!res.ok) throw new Error("Server error: " + res.status);
+      const data = await res.json();
+      const list = Array.isArray(data) ? data : (data.products || []);
+      if (list.length > 0) {
+        ALL_PRODUCTS = list;
+      } else if (!ALL_PRODUCTS.length) {
         ALL_PRODUCTS = FALLBACK_PRODUCTS;
       }
-      renderProducts();
+    } catch (err) {
+      if (!ALL_PRODUCTS.length) ALL_PRODUCTS = FALLBACK_PRODUCTS;
     }
+    renderProducts();
+  }
 
-    function renderProducts() {
-      const grid = document.getElementById("product-grid");
-      const query = document.getElementById("search-input").value.trim().toLowerCase();
-      grid.innerHTML = "";
+  // Automatically sync when you switch back from /admin tab to the storefront
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") loadProducts();
+  });
 
-      const filtered = ALL_PRODUCTS.map((item, idx) => ({
-        ...item,
-        dropNumber: String(idx + 1).padStart(2, "0"),
-        resolvedCategory: inferCategory(item)
-      })).filter(item => {
-        const matchesCat = activeCategory.toLowerCase() === "all" || (item.resolvedCategory || "").toLowerCase() === activeCategory.toLowerCase();
-        const matchesQuery = !query ||
-          (item.title || "").toLowerCase().includes(query) ||
-          (item.description || "").toLowerCase().includes(query) ||
-          `#${item.dropNumber}`.includes(query) ||
-          item.dropNumber === query;
-        return matchesCat && matchesQuery;
-      });
+  function renderProducts() {
+    const grid = document.getElementById("product-grid");
+    const query = (document.getElementById("search-input")?.value || "").trim().toLowerCase();
+    grid.innerHTML = "";
+
+    const filtered = ALL_PRODUCTS.map((item, idx) => ({
+      ...item,
+      dropNumber: String(idx + 1).padStart(2, "0"),
+      resolvedCategory: inferCategory(item)
+    })).filter(item => {
+      const activeCat = (activeCategory || "all").trim().toLowerCase();
+      const itemCat = (item.resolvedCategory || "").trim().toLowerCase();
+      const matchesCat = activeCat === "all" || itemCat === activeCat;
+      const matchesQuery = !query ||
+        (item.title || "").toLowerCase().includes(query) ||
+        (item.description || "").toLowerCase().includes(query) ||
+        `#${item.dropNumber}`.includes(query) ||
+        item.dropNumber === query;
+      return matchesCat && matchesQuery;
+    });
 
       if (filtered.length === 0) {
         grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem 1rem; color:var(--text-muted);">No drops match that filter yet. Check back soon or tap <strong>All Drops</strong>.</div>`;
