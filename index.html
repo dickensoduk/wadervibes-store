@@ -1461,7 +1461,7 @@ async function updateHeroByWeather(isInitial = true) {
     const geo = await geoRes.json();
     if (!geo.latitude || !geo.longitude) return;
 
-    const weatherUrl = `https://open-meteo.com{geo.latitude}&longitude=${geo.longitude}&current_weather=true`;
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${geo.latitude}&longitude=${geo.longitude}&current_weather=true`;
     const weatherRes = await fetch(weatherUrl);
     const weatherData = await weatherRes.json();
     const temp = weatherData.current_weather.temperature;
