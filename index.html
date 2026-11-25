@@ -1600,6 +1600,68 @@ document.addEventListener("DOMContentLoaded", () => {
 }
 </script>
   <script>
+  const COMMENTS_API = "https://wadervibes-core.onrender.com/api/comments";
+
+  const THUMB_UP_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>`;
+  const THUMB_DOWN_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/></svg>`;
+
+  async function renderWaderComments() {
+    const listEl = document.getElementById("wader-comments-list");
+    if (!listEl) return;
+
+    try {
+      const res = await fetch(`${COMMENTS_API}?t=${Date.now()}`, { cache: "no-store" });
+      if (!res.ok) return;
+      const rows = await res.json();
+
+      if (!Array.isArray(rows) || !rows.length) {
+        listEl.innerHTML = `<div style="color:#9eb5a7;font-size:13px;">No drop talk yet. Be the first to post!</div>`;
+        return;
+      }
+
+      listEl.innerHTML = rows.map(c => {
+        const likes = Number(c.likes || 0);
+        const dislikes = Number(c.dislikes || 0);
+        const total = likes + dislikes;
+        const likePct = total > 0 ? Math.round((likes / total) * 100) : 0;
+        const dislikePct = total > 0 ? Math.round((dislikes / total) * 100) : 0;
+
+        return `
+          <div style="background:#04110a;border:1px solid #163b27;border-radius:10px;padding:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#7ef9d0;font-weight:700;margin-bottom:5px;">
+              <span>${c.customer_name}</span>
+              <span style="color:#9eb5a7;font-weight:400;">${c.created_at || ""}</span>
+            </div>
+            <div style="font-size:13.5px;color:#e8f5ee;line-height:1.45;margin-bottom:10px;">${c.comment}</div>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <button type="button" onclick="voteWaderComment(${c.id}, 'like')"
+                style="display:inline-flex;align-items:center;gap:6px;background:rgba(16,185,129,0.12);border:1.5px solid #10b981;color:#6ee7b7;border-radius:8px;padding:5px 11px;font-size:12px;font-weight:700;cursor:pointer;">
+                ${THUMB_UP_SVG} Support <span>${likes} (${likePct}%)</span>
+              </button>
+              <button type="button" onclick="voteWaderComment(${c.id}, 'dislike')"
+                style="display:inline-flex;align-items:center;gap:6px;background:rgba(220,20,60,0.14);border:1.5px solid #dc143c;color:#fda4af;border-radius:8px;padding:5px 11px;font-size:12px;font-weight:700;cursor:pointer;">
+                ${THUMB_DOWN_SVG} Dislike <span>${dislikes} (${dislikePct}%)</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    } catch (err) {
+      console.warn("Failed to load comments:", err);
+    }
+  }
+
+  async function voteWaderComment(id, type) {
+    try {
+      const res = await fetch(`${COMMENTS_API}/${id}/react`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type })
+      });
+      if (res.ok) await renderWaderComments();
+    } catch (err) {}
+  }
+
   async function submitWaderComment() {
     const nameInput = document.getElementById("c-name");
     const textInput = document.getElementById("c-text");
@@ -1618,7 +1680,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const res = await fetch("https://wadervibes-core.onrender.com/api/comments", {
+      const res = await fetch(COMMENTS_API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ customer_name, comment })
@@ -1626,7 +1688,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (res.ok) {
         if (textInput) textInput.value = "";
-        if (typeof loadComments === "function") await loadComments();
+        await renderWaderComments();
       } else {
         alert("Server error: " + res.status);
       }
@@ -1639,6 +1701,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   }
+
+  renderWaderComments();
 </script>
 </body>
 </html>
