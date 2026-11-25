@@ -1470,23 +1470,23 @@ async function postWaderComment(e) {
   }
 }
 
-    async function reactWaderComment(id, type, btn) {
-      const key = 'wader_voted_' + id;
-      if (localStorage.getItem(key)) return;
-      const res = await fetch(API_BASE + '/api/comments/' + id + '/react', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type })
-      });
-      if (res.ok) {
-        const counts = await res.json();
-        localStorage.setItem(key, type);
-            const parent = btn.parentElement;
-    const spans = parent.querySelectorAll('span');
-    if (spans[0]) spans[0].textContent = counts.likes;
-    if (spans[1]) spans[1].textContent = counts.dislikes;
-      }
+ async function reactWaderComment(id, type, btn) {
+    const key = 'wader_voted_' + id;
+    if (localStorage.getItem(key)) return;
+    const res = await fetch(API_BASE + '/api/comments/' + id + '/react', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type })
+    });
+    if (res.ok) {
+      const counts = await res.json();
+      localStorage.setItem(key, type);
+      const parent = btn.parentElement;
+      const spans = parent.querySelectorAll('span');
+      if (spans) spans.textContent = counts.likes;
+      if (spans) spans.textContent = counts.dislikes;
     }
+  }
 
     document.addEventListener('DOMContentLoaded', loadWaderComments);
   </script>
