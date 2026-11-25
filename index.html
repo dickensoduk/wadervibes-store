@@ -30,12 +30,17 @@
       transition: background 1.2s ease;
     }
 #hero-title {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: clamp(2.1rem, 7vw, 3.6rem);
-  letter-spacing: -0.04em;
-  line-height: 1.05;
-  text-transform: uppercase;
+  font-family: 'Syne', sans-serif !important;
+  font-weight: 800 !important;
+  font-size: clamp(2.1rem, 7vw, 3.6rem) !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.05 !important;
+  text-transform: uppercase !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  -webkit-text-stroke: 2px #f3f7f4;
+  filter: drop-shadow(0 0 12px rgba(29, 178, 103, 0.35));
+  transition: -webkit-text-stroke-color 0.8s ease, filter 0.8s ease;
 }
 
     /* Running NLT Scripture Backdrop */
@@ -1218,27 +1223,28 @@ loadProducts();
         const weatherData = await weatherRes.json();
         const temp = weatherData.current_weather.temperature;
 
-                if (temp < 18) {
+        if (temp < 18) {
           heroTitle.textContent = "DAMN! YOU'RE COOL.";
-          heroTitle.style.color = "#7dd3fc";
-          heroTitle.style.webkitTextFillColor = "#7dd3fc";
+          heroTitle.style.webkitTextStrokeColor = "#7dd3fc";
+          heroTitle.style.filter = "drop-shadow(0 0 14px rgba(125, 211, 252, 0.4))";
           document.body.style.background = "radial-gradient(ellipse 80% 38% at 50% 0%, #103242 0%, #07130d 75%)";
         } else if (temp <= 22) {
           heroTitle.textContent = "YOU KINDA CHILL.";
-          heroTitle.style.color = "#7ef9d0";
-          heroTitle.style.webkitTextFillColor = "#7ef9d0";
+          heroTitle.style.webkitTextStrokeColor = "#7ef9d0";
+          heroTitle.style.filter = "drop-shadow(0 0 14px rgba(126, 249, 208, 0.4))";
           document.body.style.background = "radial-gradient(ellipse 80% 38% at 50% 0%, #0f3829 0%, #07130d 75%)";
         } else if (temp <= 26) {
           heroTitle.textContent = "FINALLY! Welcome.";
-          heroTitle.style.color = "#f3f7f4";
-          heroTitle.style.webkitTextFillColor = "#f3f7f4";
+          heroTitle.style.webkitTextStrokeColor = "#1db267";
+          heroTitle.style.filter = "drop-shadow(0 0 14px rgba(29, 178, 103, 0.45))";
           document.body.style.background = "radial-gradient(ellipse 80% 38% at 50% 0%, #0f3822 0%, #07130d 75%)";
         } else {
           heroTitle.textContent = "OKAY! HOTTY.";
-          heroTitle.style.color = "#fcd34d";
-          heroTitle.style.webkitTextFillColor = "#fcd34d";
+          heroTitle.style.webkitTextStrokeColor = "#fcd34d";
+          heroTitle.style.filter = "drop-shadow(0 0 14px rgba(252, 211, 77, 0.4))";
           document.body.style.background = "radial-gradient(ellipse 80% 38% at 50% 0%, #36290c 0%, #07130d 75%)";
         }
+        
       } catch (err) {
         console.warn('Weather check failed:', err);
       }
