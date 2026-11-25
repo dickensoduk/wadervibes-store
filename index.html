@@ -957,20 +957,6 @@ function setCurrency(curr) {
   if (typeof renderProducts === "function") renderProducts();
 }
 
-    const FALLBACK_PRODUCTS = [
-      {
-        id: "wader-okay-so-tee",
-        title: '#wadervibes "Okay. So?" Heavyweight Tee',
-        description: "Garment-dyed 100% ring-spun cotton. Clean front, bold back POV statement, #wadervibes inner neck tag.",
-        price_usd: 29.99,
-        sizes: ["S", "M", "L", "XL", "2XL","3XL"],
-        tag: "Streetwear",
-        category: "apparel",
-        image_url: "",
-        fulfillment_type: "manual"
-      }
-    ];
-
     let ALL_PRODUCTS = [];
     let activeCategory = "all";
     let activeProduct = null;
@@ -991,23 +977,19 @@ function setCurrency(curr) {
   }
 
   async function loadProducts() {
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/products?t=${Date.now()}`, {
-        cache: "no-store"
-      });
-      if (!res.ok) throw new Error("Server error: " + res.status);
-      const data = await res.json();
-      const list = Array.isArray(data) ? data : (data.products || []);
-      if (list.length > 0) {
-        ALL_PRODUCTS = list;
-      } else if (!ALL_PRODUCTS.length) {
-        ALL_PRODUCTS = FALLBACK_PRODUCTS;
-      }
-    } catch (err) {
-      if (!ALL_PRODUCTS.length) ALL_PRODUCTS = FALLBACK_PRODUCTS;
-    }
-    renderProducts();
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/products?t=${Date.now()}`, {
+      cache: "no-store"
+    });
+    if (!res.ok) throw new Error("Server error: " + res.status);
+    const data = await res.json();
+    const list = Array.isArray(data) ? data : (data.products || []);
+    ALL_PRODUCTS = list;
+  } catch (err) {
+    ALL_PRODUCTS = [];
   }
+  renderProducts();
+}
 
   // Automatically sync when you switch back from /admin tab to the storefront
   document.addEventListener("visibilitychange", () => {
