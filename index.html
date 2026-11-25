@@ -987,7 +987,7 @@ function setCurrency(curr) {
       document.getElementById("checkout-modal").classList.remove("active");
     });
     // Distance & Free-Delivery Pricing (USD base — auto-converts to KES)
-    const FREE_DELIVERY_THRESHOLD_USD = 25; // Orders >= $25 (~KES 3,250) unlock 100% Free Delivery
+        const FREE_DELIVERY_THRESHOLD_USD = 25; // Orders >= $25 (~KES 3,250) unlock 100% Free Delivery
     const BASE_BAKED_DELIVERY_USD = 3.50;   // Standard long-distance delivery already baked into item price
 
     function getDistanceDeliveryUsd(county) {
