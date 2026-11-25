@@ -1556,7 +1556,7 @@ async function handleStarClick(productTitle, isUnlocked) {
 }
 
 async function loadComments() {
-  const listEl = document.getElementById("comments-list");
+  const listEl = document.getElementById("wader-comments-list");
   if (!listEl) return;
   try {
     const res = await fetch(`${RATINGS_API_BASE}/api/comments`);
@@ -1597,12 +1597,10 @@ document.addEventListener("DOMContentLoaded", () => {
   loadRatings();
   loadComments();
 
-  const commentForm = document.getElementById("comment-form");
-  if (commentForm) {
-    commentForm.addEventListener("submit", async (e) => {
+  async function postWaderComment(e) {
       e.preventDefault();
-      const nameInput = document.getElementById("comment-name");
-      const textInput = document.getElementById("comment-text");
+      const nameInput = document.getElementById("c-name");
+      const textInput = document.getElementById("c-text");
       const customer_name = (nameInput?.value || "").trim();
       const comment = (textInput?.value || "").trim();
       if (!customer_name || !comment) return;
@@ -1620,9 +1618,8 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch (err) {
         alert("Could not post comment right now.");
       }
-    });
   }
-});
+
 </script>
 </body>
 </html>
