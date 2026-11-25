@@ -30,17 +30,32 @@
       transition: background 1.2s ease;
     }
 #hero-title {
-  font-family: 'Syne', sans-serif !important;
-  font-weight: 800 !important;
-  font-size: clamp(2.1rem, 7vw, 3.6rem) !important;
-  letter-spacing: -0.02em !important;
-  line-height: 1.05 !important;
-  text-transform: uppercase !important;
-  color: transparent !important;
-  -webkit-text-fill-color: transparent !important;
-  -webkit-text-stroke: 2px #f3f7f4;
-  filter: drop-shadow(0 0 12px rgba(29, 178, 103, 0.35));
-  transition: -webkit-text-stroke-color 0.8s ease, filter 0.8s ease;
+  font-style: normal;
+  font-size: clamp(1.75rem, 4.5vw, 3.1rem);
+  color: transparent;
+  -webkit-text-stroke: 1.5px #ff4d6d;
+  filter: drop-shadow(0 0 14px rgba(220, 38, 38, 0.55));
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    -webkit-text-stroke-color 0.8s ease,
+    filter 0.8s ease,
+    font-size 0.55s ease;
+}
+
+#hero-title.hero-fading {
+  opacity: 0;
+  transform: translateY(-6px) scale(0.985);
+}
+
+.weather-glow-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
  .filter-btn {
   padding: 0.5rem 1.05rem;
@@ -1358,46 +1373,150 @@ loadProducts();
       </script>
 
         <script>
-    async function updateHeroByWeather() {
-      const heroTitle = document.getElementById('hero-title');
-      if (!heroTitle) return;
+let activeGlowIndex = 0;
+let currentHeroState = "";
 
-      try {
-        const geoRes = await fetch('https://ipapi.co/json/');
-        const geo = await geoRes.json();
-        if (!geo.latitude || !geo.longitude) return;
+function setHeroStateSmooth(state, instant = false) {
+  const heroTitle = document.getElementById('hero-title');
+  if (!heroTitle) return;
 
-        const weatherUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + geo.latitude + '&longitude=' + geo.longitude + '&current_weather=true'
-        const weatherRes = await fetch(weatherUrl);
-        const weatherData = await weatherRes.json();
-        const temp = weatherData.current_weather.temperature;
+  // Create two stacked background layers once for true cross-fading
+  let layerA = document.getElementById('weather-glow-a');
+  let layerB = document.getElementById('weather-glow-b');
+  if (!layerA || !layerB) {
+    layerA = document.createElement('div');
+    layerA.id = 'weather-glow-a';
+    layerA.className = 'weather-glow-layer';
+    layerA.style.opacity = '1';
 
-        if (temp < 18) {
-          heroTitle.textContent = "DAMN! YOU'RE COOL.";
-          heroTitle.style.webkitTextStrokeColor = "#7dd3fc";
-          heroTitle.style.filter = "drop-shadow(0 0 14px rgba(125, 211, 252, 0.4))";
-          document.body.style.background = "radial-gradient(ellipse 80% 38% at 50% 0%, #103242 0%, #07130d 75%)";
-        } else if (temp <= 22) {
-          heroTitle.textContent = "YOU KINDA CHILL.";
-          heroTitle.style.webkitTextStrokeColor = "#7ef9d0";
-          heroTitle.style.filter = "drop-shadow(0 0 14px rgba(126, 249, 208, 0.4))";
-          document.body.style.background = "radial-gradient(ellipse 80% 38% at 50% 0%, #0f3829 0%, #07130d 75%)";
-        } else if (temp <= 26) {
-          heroTitle.textContent = "FINALLY! Welcome.";
-          heroTitle.style.webkitTextStrokeColor = "#1db267";
-          heroTitle.style.filter = "drop-shadow(0 0 14px rgba(29, 178, 103, 0.45))";
-          document.body.style.background = "radial-gradient(ellipse 80% 38% at 50% 0%, #0f3822 0%, #07130d 75%)";
-        } else {
-          heroTitle.textContent = "OKAY! HOTTY.";
-          heroTitle.style.webkitTextStrokeColor = "#fcd34d";
-          heroTitle.style.filter = "drop-shadow(0 0 14px rgba(252, 211, 77, 0.4))";
-          document.body.style.background = "radial-gradient(ellipse 80% 38% at 50% 0%, #36290c 0%, #07130d 75%)";
-        }
-        
-      } catch (err) {
-        console.warn('Weather check failed:', err);
-      }
+    layerB = document.createElement('div');
+    layerB.id = 'weather-glow-b';
+    layerB.className = 'weather-glow-layer';
+    layerB.style.opacity = '0';
+
+    document.body.prepend(layerB);
+    document.body.prepend(layerA);
+  }
+
+  // Skip if already displaying this exact headline
+  if (currentHeroState === state.text) return;
+  currentHeroState = state.text;
+
+  const nextLayer = activeGlowIndex === 0 ? layerB : layerA;
+  const prevLayer = activeGlowIndex === 0 ? layerA : layerB;
+
+  if (instant) {
+    heroTitle.textContent = state.text;
+    heroTitle.style.fontStyle = state.fontStyle || "normal";
+    heroTitle.style.fontSize = state.fontSize || "";
+    heroTitle.style.webkitTextStrokeColor = state.stroke;
+    heroTitle.style.filter = state.shadow;
+    prevLayer.style.background = state.bg;
+    prevLayer.style.opacity = '1';
+    nextLayer.style.opacity = '0';
+    return;
+  }
+
+  // 1. Cross-fade background glow smoothly without dipping to black
+  nextLayer.style.background = state.bg;
+  nextLayer.style.opacity = '1';
+  prevLayer.style.opacity = '0';
+  activeGlowIndex = activeGlowIndex === 0 ? 1 : 0;
+
+  // 2. Smoothly dissolve out current headline
+  heroTitle.classList.add('hero-fading');
+
+  setTimeout(() => {
+    // 3. Swap headline text, size, stroke, and drop-shadow glow while faded
+    heroTitle.textContent = state.text;
+    heroTitle.style.fontStyle = state.fontStyle || "normal";
+    heroTitle.style.fontSize = state.fontSize || "";
+    heroTitle.style.webkitTextStrokeColor = state.stroke;
+    heroTitle.style.filter = state.shadow;
+
+    // 4. Smoothly glide and fade back in
+    heroTitle.classList.remove('hero-fading');
+  }, 550);
+}
+
+async function updateHeroByWeather(isInitial = true) {
+  const welcomeState = {
+    text: "FINALLY! Welcome.",
+    fontStyle: "normal",
+    fontSize: "clamp(1.75rem, 4.5vw, 3.1rem)",
+    stroke: "#ff4d6d",
+    shadow: "drop-shadow(0 0 14px rgba(220, 38, 38, 0.55))",
+    bg: "radial-gradient(ellipse 80% 38% at 50% 0%, #2b0b12 0%, #07130d 75%)"
+  };
+
+  if (isInitial) {
+    setHeroStateSmooth(welcomeState, true);
+  }
+
+  const loadStart = Date.now();
+
+  try {
+    const geoRes = await fetch('https://ipapi.co');
+    const geo = await geoRes.json();
+    if (!geo.latitude || !geo.longitude) return;
+
+    const weatherUrl = `https://open-meteo.com{geo.latitude}&longitude=${geo.longitude}&current_weather=true`;
+    const weatherRes = await fetch(weatherUrl);
+    const weatherData = await weatherRes.json();
+    const temp = weatherData.current_weather.temperature;
+
+    // Hold initial crimson welcome for at least 3.5 seconds before transitioning
+    if (isInitial) {
+      const elapsed = Date.now() - loadStart;
+      const waitMs = Math.max(0, 3500 - elapsed);
+      await new Promise(resolve => setTimeout(resolve, waitMs));
     }
+
+    let targetState = welcomeState;
+
+    if (temp < 16) {
+      targetState = {
+        text: "DAMN! YOU'RE COOL.",
+        fontStyle: "normal",
+        fontSize: "",
+        stroke: "#7dd3fc",
+        shadow: "drop-shadow(0 0 14px rgba(125, 211, 252, 0.4))",
+        bg: "radial-gradient(ellipse 80% 38% at 50% 0%, #103242 0%, #07130d 75%)"
+      };
+    } else if (temp <= 22) {
+      targetState = {
+        text: "YOU KINDA CHILL.",
+        fontStyle: "normal",
+        fontSize: "",
+        stroke: "#7ef9d0",
+        shadow: "drop-shadow(0 0 14px rgba(126, 249, 208, 0.4))",
+        bg: "radial-gradient(ellipse 80% 38% at 50% 0%, #0f3829 0%, #07130d 75%)"
+      };
+    } else if (temp <= 26) {
+      targetState = welcomeState;
+    } else {
+      targetState = {
+        text: "OKAY! HOTTY.",
+        fontStyle: "normal",
+        fontSize: "",
+        stroke: "#fcd34d",
+        shadow: "drop-shadow(0 0 14px rgba(252, 211, 77, 0.4))",
+        bg: "radial-gradient(ellipse 80% 38% at 50% 0%, #36290c 0%, #07130d 75%)"
+      };
+    }
+
+    setHeroStateSmooth(targetState, false);
+  } catch (err) {
+    console.warn('Weather check failed:', err);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  updateHeroByWeather(true);
+  // Smoothly re-check weather every 15 minutes if tab stays open
+  setInterval(() => updateHeroByWeather(false), 15 * 60 * 1000);
+});
+</script>
 
     document.addEventListener('DOMContentLoaded', updateHeroByWeather);
   </script>
