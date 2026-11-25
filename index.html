@@ -1117,16 +1117,16 @@ function setCurrency(curr) {
       updatePaymentEligibility();
     });
 
-        document.getElementById("cust-county").addEventListener("change", () => {
+    document.getElementById("cust-county").addEventListener("change", () => {
       updatePaymentEligibility();
       refreshCheckoutSummary();
     });
 
-    document.querySelectorAll("#category-pills .pill-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll("#category-pills .pill-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        activeCategory = btn.dataset.cat;
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeCategory = btn.dataset.category || 'all';
         renderProducts();
       });
     });
