@@ -42,6 +42,23 @@
   filter: drop-shadow(0 0 12px rgba(29, 178, 103, 0.35));
   transition: -webkit-text-stroke-color 0.8s ease, filter 0.8s ease;
 }
+ .filter-btn {
+  padding: 0.5rem 1.05rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(15, 36, 25, 0.78);
+  color: #d1dfd6;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.filter-btn.active {
+  background: #1db267;
+  border-color: #1db267;
+  color: #07130d;
+  box-shadow: 0 0 14px rgba(29, 178, 103, 0.4);
+}
 /* --- Hollow Glowing Stars & Rating Pill --- */
 .product-rating-pill {
   display: inline-flex;
@@ -943,14 +960,14 @@ function setCurrency(curr) {
     let activeSize = null;
     let selectedPayMethod = "mpesa";
 
-        function inferCategory(item) {
+      function inferCategory(item) {
       const cat = (item.category || "").trim().toLowerCase();
       if (cat && cat !== "all drops" && cat !== "all") return cat;
       const text = ((item.title || "") + " " + (item.tag || "")).toLowerCase();
-      if (text.includes("shoe") || text.includes("sneaker") || text.includes("slide") || text.includes("kick") || text.includes("footwear")) return "kicks & slides";
-      if (text.includes("hoodie") || text.includes("jacket") || text.includes("outerwear") || text.includes("sweater")) return "hoodies & outerwear";
+      if (text.includes("shoe") || text.includes("sneaker") || text.includes("slide") || text.includes("kick")) return "kicks & slides";
+      if (text.includes("hoodie") || text.includes("jacket") || text.includes("outerwear")) return "hoodies & outerwear";
       if (text.includes("tee") || text.includes("shirt") || text.includes("top")) return "tees & tops";
-      if (text.includes("pant") || text.includes("cargo") || text.includes("short") || text.includes("trouser")) return "bottoms & cargos";
+      if (text.includes("pant") || text.includes("cargo") || text.includes("short")) return "bottoms & cargos";
       return "accessories & scarves";
     }
 
