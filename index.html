@@ -1597,8 +1597,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadRatings();
   loadComments();
 
-  async function postWaderComment(e) {
-      e.preventDefault();
+  async function submitWaderComment() {
       const nameInput = document.getElementById("c-name");
       const textInput = document.getElementById("c-text");
       const customer_name = (nameInput?.value || "").trim();
