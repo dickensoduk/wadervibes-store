@@ -1598,29 +1598,43 @@ document.addEventListener("DOMContentLoaded", () => {
   loadComments();
 
   async function submitWaderComment() {
-      const nameInput = document.getElementById("c-name");
-      const textInput = document.getElementById("c-text");
-      const customer_name = (nameInput?.value || "").trim();
-      const comment = (textInput?.value || "").trim();
-      if (!customer_name || !comment) return;
+  const nameInput = document.getElementById("c-name");
+  const textInput = document.getElementById("c-text");
+  const btn = document.getElementById("wader-post-btn");
+  const customer_name = (nameInput?.value || "").trim();
+  const comment = (textInput?.value || "").trim();
 
-      try {
-        const res = await fetch(`${RATINGS_API_BASE}/api/comments`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ customer_name, comment })
-        });
-            if (res.ok) {
-      if (textInput) textInput.value = "";
-      loadComments();
-    } else {
-      alert("Server error " + res.status + " — redeploy backend on Render.");
-    }
-  } catch (err) {
-    alert("Backend waking up — wait 15s and tap Post again.");
-      }
+  if (!customer_name || !comment) {
+    alert("Enter both your @handle/name and comment first.");
+    return;
   }
 
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Posting...";
+  }
+
+  try {
+    const res = await fetch("https://onrender.com", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ customer_name, comment })
+    });
+    if (res.ok) {
+      if (textInput) textInput.value = "";
+      if (typeof loadComments === "function") await loadComments();
+    } else {
+      alert("Server error " + res.status);
+    }
+  } catch (err) {
+    alert("Could not reach backend: " + err.message);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "Post";
+    }
+  }
+}
 </script>
 </body>
 </html>
