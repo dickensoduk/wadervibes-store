@@ -1558,50 +1558,8 @@ async function handleStarClick(productTitle, isUnlocked) {
     alert("Network error submitting rating.");
   }
 }
-
-async function loadComments() {
-  const listEl = document.getElementById("wader-comments-list");
-  if (!listEl) return;
-  try {
-    const res = await fetch(`${RATINGS_API_BASE}/api/comments`);
-    if (!res.ok) return;
-    const rows = await res.json();
-    listEl.innerHTML = rows.length
-      ? rows.map(c => `
-          <div style="background:#04110a;border:1px solid #163b27;border-radius:10px;padding:10px 12px;margin-bottom:8px;">
-            <div style="display:flex;justify-content:space-between;font-size:12px;color:#7ef9d0;font-weight:700;margin-bottom:4px;">
-              <span>${c.customer_name}</span>
-              <span style="color:#9eb5a7;font-weight:400;">${c.created_at || ""}</span>
-            </div>
-            <div style="font-size:13px;color:#e8f5ee;margin-bottom:6px;">${c.comment}</div>
-            <div style="display:flex;gap:12px;font-size:12px;">
-              <button type="button" onclick="reactComment(${c.id}, 'like')" style="background:none;border:none;color:#9eb5a7;cursor:pointer;padding:0;">👍 ${c.likes || 0}</button>
-              <button type="button" onclick="reactComment(${c.id}, 'dislike')" style="background:none;border:none;color:#9eb5a7;cursor:pointer;padding:0;">👎🏽 ${c.dislikes || 0}</button>
-            </div>
-          </div>
-        `).join("")
-      : `<div style="color:#9eb5a7;font-size:13px;">No drop talk yet. Be the first to post!</div>`;
-  } catch (err) {
-    console.warn("Comments load failed:", err);
-  }
-}
-
-async function reactComment(id, type) {
-  try {
-    const res = await fetch(`${RATINGS_API_BASE}/api/comments/${id}/react`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type })
-    });
-    if (res.ok) loadComments();
-  } catch (err) {}
-}
-
-document.addEventListener("DOMContentLoaded", () => {
+    
   loadRatings();
-  loadComments();
-
-}
 </script>
   <script>
   const COMMENTS_API = "https://wadervibes-core.onrender.com/api/comments";
