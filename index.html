@@ -995,7 +995,7 @@ function setCurrency(curr) {
         dropNumber: String(idx + 1).padStart(2, "0"),
         resolvedCategory: inferCategory(item)
       })).filter(item => {
-        const matchesCat = activeCategory === "all" || item.resolvedCategory === activeCategory;
+        const matchesCat = activeCategory.toLowerCase() === "all" || (item.resolvedCategory || "").toLowerCase() === activeCategory.toLowerCase();
         const matchesQuery = !query ||
           (item.title || "").toLowerCase().includes(query) ||
           (item.description || "").toLowerCase().includes(query) ||
