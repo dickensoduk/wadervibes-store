@@ -972,6 +972,71 @@ function setCurrency(curr) {
     document.getElementById("close-modal").addEventListener("click", () => {
       document.getElementById("checkout-modal").classList.remove("active");
     });
+    // Distance & Free-Delivery Pricing (USD base — auto-converts to KES)
+    const FREE_DELIVERY_THRESHOLD_USD = 25; // Orders >= $25 (~KES 3,250) unlock 100% Free Delivery
+    const BASE_BAKED_DELIVERY_USD = 3.50;   // Standard long-distance delivery already baked into item price
+
+    function getDistanceDeliveryUsd(county) {
+      if (county === "Kisumu") return 2.00; // Local Kisumu rider (~KES 260)
+      if (["Kisii", "Kakamega", "Uasin Gishu"].includes(county)) return 2.75; // Western/Rift shuttle (~KES 355)
+      return BASE_BAKED_DELIVERY_USD; // Nairobi, Mombasa & long-distance (~KES 450)
+    }
+
+    function getCheckoutTotals() {
+      const unitUsd = Number(activeProduct.price_usd || activeProduct.price || 0);
+      const qtyEl = document.getElementById("cust-qty");
+      const countyEl = document.getElementById("cust-county");
+      const qty = qtyEl ? Math.max(1, parseInt(qtyEl.value, 10) || 1) : 1;
+      const county = countyEl ? countyEl.value : "Kisumu";
+
+      const rawSubtotalUsd = +(unitUsd * qty).toFixed(2);
+      const qualifiesFree = rawSubtotalUsd >= FREE_DELIVERY_THRESHOLD_USD;
+      const actualDeliveryUsd = getDistanceDeliveryUsd(county);
+
+      const rebateUsd = qualifiesFree
+        ? BASE_BAKED_DELIVERY_USD
+        : +(BASE_BAKED_DELIVERY_USD - actualDeliveryUsd).toFixed(2);
+
+      const finalTotalUsd = +Math.max(1, rawSubtotalUsd - rebateUsd).toFixed(2);
+      const orderTitle = qty > 1 ? `${activeProduct.title} (x${qty})` : activeProduct.title;
+
+      return { qty, county, rawSubtotalUsd, actualDeliveryUsd, rebateUsd, finalTotalUsd, qualifiesFree, orderTitle };
+    }
+
+    function changeOrderQty(delta) {
+      const qtyEl = document.getElementById("cust-qty");
+      if (!qtyEl) return;
+      qtyEl.value = Math.min(10, Math.max(1, (parseInt(qtyEl.value, 10) || 1) + delta));
+      refreshCheckoutSummary();
+    }
+
+    function refreshCheckoutSummary() {
+      if (!activeProduct) return;
+      const { qty, county, rawSubtotalUsd, actualDeliveryUsd, rebateUsd, finalTotalUsd, qualifiesFree } = getCheckoutTotals();
+      const banner = document.getElementById("delivery-banner");
+      const metaEl = document.getElementById("modal-item-meta");
+
+      if (banner) {
+        if (qualifiesFree) {
+          banner.style.background = "rgba(16,185,129,0.18)";
+          banner.style.borderColor = "#10b981";
+          banner.innerHTML = `🎉 <strong>FREE Delivery to ${county}!</strong> (${formatPrice(rebateUsd)} baked-in delivery removed for ordering ≥ ${formatPrice(FREE_DELIVERY_THRESHOLD_USD)})`;
+        } else {
+          const remainingUsd = +(FREE_DELIVERY_THRESHOLD_USD - rawSubtotalUsd).toFixed(2);
+          const distNote = rebateUsd > 0
+            ? `Distance rate for <strong>${county}</strong>: <strong>${formatPrice(actualDeliveryUsd)}</strong> (saved <strong>${formatPrice(rebateUsd)}</strong> off baked-in shipping)`
+            : `Distance rate for <strong>${county}</strong>: <strong>${formatPrice(actualDeliveryUsd)}</strong> (included in price)`;
+          banner.style.background = "rgba(16,185,129,0.10)";
+          banner.style.borderColor = "rgba(16,185,129,0.35)";
+          banner.innerHTML = `🚚 ${distNote} • Add <strong>${formatPrice(remainingUsd)}</strong> more for <strong>100% FREE Delivery</strong>`;
+        }
+      }
+
+      if (metaEl) {
+        const tag = qualifiesFree ? "FREE Delivery" : `${county} Rate`;
+        metaEl.textContent = `Option: ${activeSize} • Qty: ${qty} • Total: ${formatPrice(finalTotalUsd)} (${tag})`;
+      }
+    }
 
     document.getElementById("checkout-form").addEventListener("submit", async (e) => {
   e.preventDefault();
