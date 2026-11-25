@@ -42,6 +42,94 @@
   filter: drop-shadow(0 0 12px rgba(29, 178, 103, 0.35));
   transition: -webkit-text-stroke-color 0.8s ease, filter 0.8s ease;
 }
+/* --- Hollow Glowing Stars & Rating Pill --- */
+.product-rating-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.4rem 0 0.65rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: radial-gradient(ellipse at 50% 0%, #0f3822 0%, #07130d 90%);
+  border: 1.5px solid #25e080;
+  box-shadow: 0 0 12px rgba(29, 178, 103, 0.35), inset 0 0 8px rgba(29, 178, 103, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.product-rating-pill.unlocked { cursor: pointer; }
+.product-rating-pill.unlocked:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 16px rgba(37, 224, 128, 0.6);
+}
+.product-rating-pill.locked { cursor: not-allowed; opacity: 0.9; }
+
+.hollow-stars {
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1.3px #fcd34d;
+  filter: drop-shadow(0 0 6px rgba(252, 211, 77, 0.55));
+}
+.rating-pct {
+  color: #7ef9d0;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+/* --- Comment Section & Emerald Green / Crimson Red Buttons --- */
+.wader-comments-box {
+  max-width: 1100px;
+  margin: 2.5rem auto;
+  padding: 1.5rem;
+  border-radius: 16px;
+  background: radial-gradient(ellipse at 50% 0%, #0f3822 0%, #07130d 85%);
+  border: 1.5px solid rgba(37, 224, 128, 0.45);
+  box-shadow: 0 0 20px rgba(29, 178, 103, 0.15);
+}
+
+.react-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.78rem;
+  border-radius: 999px;
+  border: 1.5px solid #25e080;
+  background: radial-gradient(ellipse at 50% 0%, #0f3822 0%, #07130d 90%);
+  color: #7ef9d0;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(37, 224, 128, 0.38), inset 0 0 8px rgba(37, 224, 128, 0.18);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.react-btn svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: #25e080;
+  stroke-width: 2.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 5px rgba(37, 224, 128, 0.7));
+}
+.react-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 18px rgba(37, 224, 128, 0.65), inset 0 0 10px rgba(37, 224, 128, 0.28);
+}
+
+.react-btn.dislike-btn {
+  border: 1.5px solid #e11d48;
+  background: radial-gradient(ellipse at 50% 0%, #3b0a16 0%, #07130d 90%);
+  color: #fda4af;
+  box-shadow: 0 0 12px rgba(225, 29, 72, 0.4), inset 0 0 8px rgba(225, 29, 72, 0.2);
+}
+.react-btn.dislike-btn svg {
+  stroke: #fb7185;
+  filter: drop-shadow(0 0 5px rgba(225, 29, 72, 0.75));
+}
+.react-btn.dislike-btn:hover {
+  box-shadow: 0 0 18px rgba(225, 29, 72, 0.7), inset 0 0 10px rgba(225, 29, 72, 0.3);
+}
 
     /* Running NLT Scripture Backdrop */
     .scripture-bg {
@@ -639,6 +727,28 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
   <main class="grid" id="product-grid"></main>
 
   <!-- Creator POV & Social Community Hub -->
+  <section class="wader-comments-box">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <div>
+      <span style="color: #25e080; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em;">#WADERVIBES COMMUNITY</span>
+      <h2 style="color: #f3f7f4; font-size: 1.25rem; margin-top: 0.2rem;">Drop Talk & Feedback</h2>
+    </div>
+  </div>
+
+  <form onsubmit="postWaderComment(event)" style="display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.25rem;">
+    <input id="c-name" type="text" placeholder="Your @handle or name" required
+      style="flex: 1 1 160px; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid rgba(37,224,128,0.35); background: #07130d; color: #f3f7f4;">
+    <input id="c-text" type="text" placeholder="Drop your thoughts on the gear..." required
+      style="flex: 3 1 260px; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid rgba(37,224,128,0.35); background: #07130d; color: #f3f7f4;">
+    <button type="submit"
+      style="padding: 0.65rem 1.25rem; border-radius: 10px; border: none; background: #1db267; color: #07130d; font-weight: 800; cursor: pointer;">
+      Post
+    </button>
+  </form>
+
+  <div id="wader-comments-list" style="display: grid; gap: 0.75rem;"></div>
+</section>
+  
   <section class="creator-section">
     <div class="creator-card">
       <div class="creator-info">
@@ -1251,6 +1361,101 @@ loadProducts();
     }
 
     document.addEventListener('DOMContentLoaded', updateHeroByWeather);
+  </script>
+    <script>
+    const API_BASE = 'https://onrender.com';
+
+    async function handleStarClick(productTitle, isUnlocked) {
+      if (!isUnlocked) {
+        alert('Stars unlock once your order is delivered!');
+        return;
+      }
+      const orderRef = prompt('Enter your Delivered Order Reference for ' + productTitle + ':');
+      if (!orderRef) return;
+      const stars = prompt('Rate 1 to 5 stars:', '5');
+      if (!stars) return;
+
+      const res = await fetch(API_BASE + '/api/ratings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order_ref: orderRef, product_title: productTitle, stars: Number(stars) })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert('Thanks! Your rating is live.');
+        location.reload();
+      } else {
+        alert(data.error || 'Could not verify order.');
+      }
+    }
+
+    async function loadWaderComments() {
+      const list = document.getElementById('wader-comments-list');
+      if (!list) return;
+      try {
+        const res = await fetch(API_BASE + '/api/comments');
+        const comments = await res.json();
+        if (!comments.length) {
+          list.innerHTML = '<p style="color:#9eb5a7;font-size:0.85rem;">No comments yet — start the thread.</p>';
+          return;
+        }
+        list.innerHTML = comments.map(c => `
+          <div style="background: rgba(7, 19, 13, 0.75); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 0.85rem 1rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+            <div>
+              <strong style="color: #7ef9d0; font-size: 0.88rem;">${c.customer_name}</strong>
+              <span style="color: #9eb5a7; font-size: 0.75rem; margin-left: 0.4rem;">• ${c.created_at}</span>
+              <p style="color: #f3f7f4; font-size: 0.9rem; margin-top: 0.25rem;">${c.comment}</p>
+            </div>
+            <div style="display: flex; gap: 0.55rem;">
+              <button class="react-btn" onclick="reactWaderComment(${c.id}, 'like', this)" aria-label="Thumbs up">
+                <svg viewBox="0 0 24 24"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>
+                <span>${c.likes}</span>
+              </button>
+              <button class="react-btn dislike-btn" onclick="reactWaderComment(${c.id}, 'dislike', this)" aria-label="Thumbs down">
+                <svg viewBox="0 0 24 24"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/></svg>
+                <span>${c.dislikes}</span>
+              </button>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        list.innerHTML = '<p style="color:#9eb5a7;font-size:0.85rem;">Loading community feed...</p>';
+      }
+    }
+
+    async function postWaderComment(e) {
+      e.preventDefault();
+      const customer_name = document.getElementById('c-name').value;
+      const comment = document.getElementById('c-text').value;
+      const res = await fetch(API_BASE + '/api/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customer_name, comment })
+      });
+      if (res.ok) {
+        document.getElementById('c-text').value = '';
+        loadWaderComments();
+      }
+    }
+
+    async function reactWaderComment(id, type, btn) {
+      const key = 'wader_voted_' + id;
+      if (localStorage.getItem(key)) return;
+      const res = await fetch(API_BASE + '/api/comments/' + id + '/react', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type })
+      });
+      if (res.ok) {
+        const counts = await res.json();
+        localStorage.setItem(key, type);
+        const parent = btn.parentElement;
+        parent.children.querySelector('span').textContent = counts.likes;
+        parent.children.querySelector('span').textContent = counts.dislikes;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadWaderComments);
   </script>
 </body>
 </html>
