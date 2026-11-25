@@ -773,6 +773,8 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
   <form onsubmit="event.preventDefault(); submitWaderComment();" style="display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.25rem;">
     <input id="c-name" type="text" placeholder="Your @handle or name" required
       style="flex: 1 1 160px; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid rgba(37,224,128,0.35); background: #07130d; color: #f3f7f4;">
+<input id="c-verify" type="text" placeholder="Order Ref or Phone (optional — gold crown)"
+       style="flex: 1 1 180px; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid rgba(126,249,208,0.2); background: #04110a; color: #e8f5ee;">
     <input id="c-text" type="text" placeholder="Drop your thoughts on the gear..." required
       style="flex: 3 1 260px; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid rgba(37,224,128,0.35); background: #07130d; color: #f3f7f4;">
     <button type="button" id="wader-post-btn" onclick="submitWaderComment()"
@@ -1502,6 +1504,13 @@ document.addEventListener('DOMContentLoaded', () => {
   <script>
 const RATINGS_API_BASE = "https://wadervibes-core.onrender.com";
 let PRODUCT_RATINGS = {};
+const CUSTOMER_BADGE = {
+  icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fcd34d" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 6px rgba(252,211,77,0.85));flex-shrink:0;">
+    <path d="M2 18L4 7l5.5 4.5L12 5l2.5 6.5L20 7l2 11H2z"/>
+    <path d="M3 21h18"/>
+  </svg>`,
+  tooltip: "Verified Delivered Customer"
+};
 
 function getRatingPillHTML(productTitle) {
     const matchedKey = Object.keys(PRODUCT_RATINGS).find(
