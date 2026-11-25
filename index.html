@@ -714,10 +714,12 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
   <!-- Search & Category Filter Bar -->
   <div class="controls-bar">
     <div class="filter-pills" id="category-pills">
-      <button class="pill-btn active" data-cat="all">All Drops</button>
-      <button class="pill-btn" data-cat="kicks">Kicks & Slides</button>
-      <button class="pill-btn" data-cat="apparel">Streetwear</button>
-      <button class="pill-btn" data-cat="plugs">Featured Plugs</button>
+      <button class="filter-btn active" onclick="filterCategory('All Drops', this)">All Drops</button>
+<button class="filter-btn" onclick="filterCategory('Kicks & Slides', this)">Kicks & Slides</button>
+<button class="filter-btn" onclick="filterCategory('Hoodies & Outerwear', this)">Hoodies & Outerwear</button>
+<button class="filter-btn" onclick="filterCategory('Tees & Tops', this)">Tees & Tops</button>
+<button class="filter-btn" onclick="filterCategory('Bottoms & Cargos', this)">Bottoms & Cargos</button>
+<button class="filter-btn" onclick="filterCategory('Accessories & Scarves', this)">Accessories & Scarves</button>
     </div>
     <div class="search-box">
       <input type="text" id="search-input" placeholder="Search drop # or item name..." />
