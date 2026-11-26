@@ -939,11 +939,11 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
   <div class="wc-eyebrow">#WADERVIBES COMMUNITY</div>
   <h2 class="wc-title">Drop Talk &amp; Feedback</h2>
 
-    <form id="wader-comment-form" class="wc-form">
+    <form id="wader-comment-form" class="wc-form" onsubmit="event.preventDefault(); submitWaderComment(); return false;">
     <input id="c-name" class="wc-input wc-input-name" type="text" maxlength="50" placeholder="Your @handle or name" required />
     <input id="c-verify" class="wc-input wc-input-verify" type="text" maxlength="60" placeholder="Order Ref or Phone (optional - gold crown)" />
     <input id="c-text" class="wc-input wc-input-text" type="text" maxlength="280" placeholder="Drop your thoughts on the gear..." required />
-    <button type="submit" id="wader-post-btn">Post</button>
+    <button type="button" id="wader-post-btn" onclick="submitWaderComment()">Post</button>
   </form>
 
 
