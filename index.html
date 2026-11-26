@@ -1713,10 +1713,11 @@ function setCurrency(curr) {
       customer_phone: customerPhone,
       customer_email: customerEmail,
       shipping_address: shippingAddress,
-       city: city,
-       county: county,
-       order_pin: orderPin
-     }
+             shipping_address: shippingAddress,
+      city: city,
+      county: county,
+      order_pin: orderPin
+    },
     callback: function(response) {
       document.getElementById("checkout-modal").classList.remove("active");
       alert(`Payment successful! Reference: ${response.reference}. Your @king_wader order is being prepared for delivery.`);
@@ -1765,6 +1766,89 @@ document.getElementById("cancel-order-form").addEventListener("submit", async (e
   } finally {
     btn.disabled = false;
     btn.textContent = "Cancel Order";
+  }
+});
+
+["open-track-header", "open-track-modal"].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.addEventListener("click", () => {
+      document.getElementById("track-modal").classList.add("active");
+    });
+  }
+});
+
+document.getElementById("close-track-modal").addEventListener("click", () => {
+  document.getElementById("track-modal").classList.remove("active");
+});
+
+function copyOrderRef(ref, btnEl) {
+  navigator.clipboard.writeText(ref).then(() => {
+    const orig = btnEl.textContent;
+    btnEl.textContent = "Copied!";
+    setTimeout(() => { btnEl.textContent = orig; }, 1800);
+  });
+}
+
+document.getElementById("track-order-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById("submit-track-btn");
+  const resultsBox = document.getElementById("track-results");
+  const customerName = document.getElementById("track-name").value.trim();
+  const customerPhone = document.getElementById("track-phone").value.trim();
+  const customerEmail = document.getElementById("track-email").value.trim();
+  const orderPin = document.getElementById("track-pin").value.trim();
+
+  btn.disabled = true;
+  btn.textContent = "Unlocking...";
+  resultsBox.innerHTML = "";
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/orders/track`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        customer_name: customerName,
+        customer_phone: customerPhone,
+        customer_email: customerEmail,
+        order_pin: orderPin
+      })
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      resultsBox.innerHTML = `<div style="color:#fca5a5;font-size:0.85rem;">${data.error || "Could not verify order."}</div>`;
+    } else {
+      resultsBox.innerHTML = data.orders.map(o => {
+        const st = String(o.fulfillment_status || "Confirmed");
+        const isCancelled = st.includes("Cancelled");
+        const badgeBg = isCancelled ? "rgba(220,38,38,0.18)" : "rgba(24,178,103,0.15)";
+        const badgeColor = isCancelled ? "#fca5a5" : "#7ef9d0";
+
+        return `
+          <div style="background:#07130d; border:1px solid var(--border); border-radius:12px; padding:12px; font-size:0.82rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:6px;">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <strong style="color:var(--accent); font-size:0.86rem;">${o.reference}</strong>
+                <button type="button" onclick="copyOrderRef('${o.reference}', this)" style="background:rgba(255,255,255,0.08); border:1px solid var(--border); color:var(--text-main); border-radius:6px; padding:2px 6px; font-size:0.7rem; cursor:pointer;">Copy</button>
+              </div>
+              <span style="background:${badgeBg}; color:${badgeColor}; padding:2px 8px; border-radius:999px; font-weight:800; font-size:0.72rem;">${st}</span>
+            </div>
+            <div style="color:var(--text-main); font-weight:700; margin-bottom:3px;">${o.product_title} (${o.size}) &bull; ${formatPrice(o.amount_usd)}</div>
+            <div style="color:var(--text-muted); font-size:0.76rem; line-height:1.4;">
+              <strong>Recipient:</strong> ${o.customer_name}<br>
+              <strong>Drop-off:</strong> ${o.shipping_address}, ${o.city} (${o.county})<br>
+              <strong>Payment:</strong> ${o.payment_method} &bull; ${(o.created_at || "").slice(0, 10)}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+  } catch (err) {
+    resultsBox.innerHTML = `<div style="color:#fca5a5;font-size:0.85rem;">Network error connecting to Wadervibes server.</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Unlock Order Details";
   }
 });
 
