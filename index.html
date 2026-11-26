@@ -1865,10 +1865,11 @@ async function handleStarClick(productTitle, isUnlocked) {
       await renderWaderComments();
     } catch (err) {
       showCommentStatus("Network error—Render server may still be waking up. Tap Post again.", true);
-    } finally {
+        } finally {
       btn.disabled = false;
       btn.textContent = "Post";
     }
+  } // <--- ADD THIS CLOSING BRACE RIGHT BEFORE function initWaderCommunity()
 
   function initWaderCommunity() {
     const section = document.getElementById("wader-community-section");
