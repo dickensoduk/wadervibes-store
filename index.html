@@ -199,18 +199,18 @@
       z-index: 1;
     }
 
-    header {
+        header {
       position: sticky;
       top: 0;
       z-index: 50;
       backdrop-filter: blur(14px);
       background: rgba(7, 19, 13, 0.85);
       border-bottom: 1px solid var(--border);
-      padding: 0.95rem 5%;
+      padding: 0.9rem 1.25rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 1rem;
+      width: 100%;
     }
     .brand {
       display: inline-flex;
@@ -235,15 +235,7 @@
     .header-right {
       display: flex;
       align-items: center;
-      gap: 0.65rem;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-    .vibe-tag {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      letter-spacing: 0.03em;
+      gap: 0.6rem;
     }
             /* --- Nationwide Shipping Kenya Pill: Hover -> Flowing Kenyan Flag on a Pole --- */
     @keyframes kenyaFlagWave {
@@ -854,16 +846,16 @@
     </div>
   </div>
 
-  <header>
+    <header>
     <a href="#" class="brand">
       <svg class="crown-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M3 18h18v2H3v-2zm0-11l5 4 4-6 4 6 5-4-2 9H5L3 7z"/>
       </svg>
       <span>WADER</span>
     </a>
-        <div class="header-right">
-      <span class="vibe-tag">#wadervibes</span>
-            <span class="nav-badge" tabindex="0" aria-label="Nationwide Shipping Kenya">
+
+    <div class="header-right">
+      <span class="nav-badge" tabindex="0" aria-label="Nationwide Shipping Kenya">
         <span class="chip-text">Nationwide Shipping Kenya</span>
         <svg class="kenya-flag-icon" viewBox="0 0 28 24" fill="none" aria-hidden="true">
           <circle cx="5.5" cy="3.2" r="1.2" stroke="#e2e8f0" stroke-width="1.6" />
@@ -878,6 +870,7 @@
           <ellipse cx="16.2" cy="10.8" rx="1.5" ry="2.8" fill="#b91c1c" stroke="#ffffff" stroke-width="0.75" />
         </svg>
       </span>
+
       <button type="button" id="open-track-header" class="track-order-chip" aria-label="Track Order">
         <span class="chip-text">Track Order</span>
         <svg class="modified-truck-icon" viewBox="0 0 28 24" aria-hidden="true">
@@ -889,14 +882,11 @@
           <circle cx="21" cy="18.2" r="2.2" />
         </svg>
       </button>
-      <div id="curr-switch" style="display:inline-flex;background:rgba(7,19,13,.9);border:1px solid
-rgba(24,178,103,.35);border-radius:999px;padding:2px;">
-<button type="button" id="btn-kes" onclick="setCurrency('KES')" style=
-"background:#18b267;color:#04110a;border:none;border-radius:999px;padding:.2rem
-.6rem;font-size:.75rem;font-weight:800;cursor:pointer;">KES</button>
-<button type="button" id="btn-usd" onclick="setCurrency('USD')" style=
-"background:transparent;color:#9eb3a7;border:none;border-radius:999px;padding:.2rem
-.6rem;font-size:.75rem;font-weight:800;cursor:pointer;">USD</button>
+
+      <div id="curr-switch" style="display:inline-flex;background:rgba(7,19,13,.9);border:1px solid rgba(24,178,103,.35);border-radius:999px;padding:2px;">
+        <button type="button" id="btn-kes" onclick="setCurrency('KES')" style="background:#18b267;color:#04110a;border:none;border-radius:999px;padding:.2rem .6rem;font-size:.75rem;font-weight:800;cursor:pointer;">KES</button>
+        <button type="button" id="btn-usd" onclick="setCurrency('USD')" style="background:transparent;color:#9eb3a7;border:none;border-radius:999px;padding:.2rem .6rem;font-size:.75rem;font-weight:800;cursor:pointer;">USD</button>
+      </div>
     </div>
   </header>
 
