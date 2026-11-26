@@ -1450,7 +1450,7 @@ function setCurrency(curr) {
 
     function refreshCheckoutSummary() {
       if (!activeProduct) return;
-      const { qty, county, rawSubtotalUsd, actualDeliveryUsd, rebateUsd, finalTotalUsd, qualifiesFree } = getCheckoutTotals();
+      const { qty, sizeSummary, county, rawSubtotalUsd, actualDeliveryUsd, rebateUsd, finalTotalUsd, qualifiesFree } = getCheckoutTotals();
       const cityVal = (document.getElementById("cust-city")?.value || "").trim();
       const sameDay = isSameDayEligible(activeProduct, county, cityVal);
       const banner = document.getElementById("delivery-banner");
@@ -1479,7 +1479,7 @@ function setCurrency(curr) {
       if (metaEl) {
         const speedTag = sameDay ? "⚡ Same-Day" : `${county} Courier`;
         const priceTag = qualifiesFree ? "FREE Delivery" : speedTag;
-        metaEl.textContent = `Option: ${activeSize} • Qty: ${qty} • Total: ${formatPrice(finalTotalUsd)} (${priceTag})`;
+        metaEl.textContent = `Sizes: ${sizeSummary} • Qty: ${qty} • Total: ${formatPrice(finalTotalUsd)} (${priceTag})`;
       }
     }
 
@@ -1499,7 +1499,7 @@ function setCurrency(curr) {
   const city = document.getElementById("cust-city").value.trim();
   const county = document.getElementById("cust-county").value;
 
-        const { finalTotalUsd, orderTitle } = getCheckoutTotals();
+              const { qty, sizeSummary, finalTotalUsd, orderTitle } = getCheckoutTotals();
       const priceVal = finalTotalUsd;
 
   // 1. Handle Pay on Delivery for Kisumu & Nairobi
@@ -1513,9 +1513,10 @@ function setCurrency(curr) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          product_id: activeProduct.id,
+                    product_id: activeProduct.id,
           product_title: orderTitle,
-          size: activeSize,
+          size: sizeSummary,
+          quantity: qty,
           amount_usd: priceVal,
           customer_name: customerName,
           customer_phone: customerPhone,
@@ -1564,7 +1565,8 @@ function setCurrency(curr) {
     metadata: {
       product_id: activeProduct.id,
       product_title: orderTitle,
-      size: activeSize,
+      size: sizeSummary,
+      quantity: qty,
       customer_name: customerName,
       customer_phone: customerPhone,
       customer_email: customerEmail,
