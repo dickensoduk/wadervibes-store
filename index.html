@@ -1723,18 +1723,27 @@ function setCurrency(curr) {
       return false;
     }
 
+        function isPreOrderDrop(product) {
+      if (!product || !product.tag) return false;
+      const tag = String(product.tag).toLowerCase();
+      return tag.includes("pre-order") || tag.includes("preorder") || tag.includes("import");
+    }
+
     function refreshCheckoutSummary() {
       if (!activeProduct) return;
       const { qty, sizeSummary, county, rawSubtotalUsd, actualDeliveryUsd, rebateUsd, finalTotalUsd, qualifiesFree } = getCheckoutTotals();
       const cityVal = (document.getElementById("cust-city")?.value || "").trim();
       const sameDay = isSameDayEligible(activeProduct, county, cityVal);
+      const isPreOrder = isPreOrderDrop(activeProduct);
       const banner = document.getElementById("delivery-banner");
       const metaEl = document.getElementById("modal-item-meta");
 
       if (banner) {
         const speedPrefix = sameDay
           ? `⚡ <strong>Same-Day Rider Dispatch</strong> available in <strong>${cityVal || county}</strong>! `
-          : `📦 <strong>2–5 Working Days</strong> nationwide courier to <strong>${county}</strong>. `;
+          : isPreOrder
+            ? `✈️ <strong>7–12 Working Days</strong> imported drop delivery to <strong>${county}</strong>. `
+            : `📦 <strong>2–5 Working Days</strong> nationwide courier to <strong>${county}</strong>. `;
 
         if (qualifiesFree) {
           banner.style.background = "rgba(16,185,129,0.18)";
@@ -1752,7 +1761,7 @@ function setCurrency(curr) {
       }
 
       if (metaEl) {
-        const speedTag = sameDay ? "⚡ Same-Day" : `${county} Courier`;
+        const speedTag = sameDay ? "⚡ Same-Day" : isPreOrder ? "✈️ 7–12 Days Import" : `${county} Courier`;
         const priceTag = qualifiesFree ? "FREE Delivery" : speedTag;
         metaEl.textContent = `Sizes: ${sizeSummary} • Qty: ${qty} • Total: ${formatPrice(finalTotalUsd)} (${priceTag})`;
       }
