@@ -1430,7 +1430,10 @@ function setCurrency(curr) {
       }
     }
 
-    document.getElementById("cust-city").addEventListener("input", refreshCheckoutSummary);
+    document.getElementById("cust-city").addEventListener("input", () => {
+      updatePaymentEligibility();
+      refreshCheckoutSummary();
+    });
 
     document.getElementById("checkout-form").addEventListener("submit", async (e) => {
   e.preventDefault();
