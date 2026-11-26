@@ -245,7 +245,7 @@
       color: var(--text-muted);
       letter-spacing: 0.03em;
     }
-    .nav-badge {
+     .nav-badge {
       font-size: 0.78rem;
       background: rgba(24, 178, 103, 0.15);
       color: var(--accent);
@@ -255,6 +255,75 @@
       font-weight: 600;
     }
 
+    /* --- Track Order Button: Text Dissolves -> Hollow Glowing Blue Modified Truck --- */
+    .track-order-chip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(24, 178, 103, 0.15);
+      color: var(--accent);
+      border: 1.5px solid rgba(24, 178, 103, 0.38);
+      padding: 0.32rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      overflow: hidden;
+      transition:
+        border-color 0.28s ease,
+        box-shadow 0.28s ease,
+        background 0.28s ease,
+        transform 0.22s ease;
+    }
+    .track-order-chip .chip-text {
+      display: inline-block;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+    .track-order-chip .modified-truck-icon {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      fill: none;
+      stroke: #7dd3fc;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0;
+      transform: scale(0.65) translateX(-5px);
+      transition:
+        opacity 0.25s ease,
+        transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+        filter 0.25s ease;
+      pointer-events: none;
+    }
+    .track-order-chip:hover,
+    .track-order-chip:active,
+    .track-order-chip:focus-visible {
+      transform: translateY(-1px);
+      background: radial-gradient(ellipse at 50% 0%, #0b2d4d 0%, #061422 92%);
+      border-color: #38bdf8;
+      box-shadow:
+        0 0 14px rgba(56, 189, 248, 0.75),
+        0 0 26px rgba(14, 165, 233, 0.4),
+        inset 0 0 10px rgba(56, 189, 248, 0.35);
+    }
+    .track-order-chip:hover .chip-text,
+    .track-order-chip:active .chip-text,
+    .track-order-chip:focus-visible .chip-text {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    .track-order-chip:hover .modified-truck-icon,
+    .track-order-chip:active .modified-truck-icon,
+    .track-order-chip:focus-visible .modified-truck-icon {
+      opacity: 1;
+      transform: scale(1) translateX(0);
+      filter:
+        drop-shadow(0 0 4px #38bdf8)
+        drop-shadow(0 0 10px rgba(56, 189, 248, 0.9));
+    }  
     .hero {
       text-align: center;
       padding: 3.5rem 5% 2rem;
@@ -497,7 +566,7 @@
       flex-wrap: wrap;
       gap: 0.6rem;
     }
-        .social-chip {
+     .social-chip {
       position: relative;
       display: inline-flex;
       align-items: center;
@@ -721,9 +790,20 @@
       </svg>
       <span>WADER</span>
     </a>
-    <div class="header-right">
+        <div class="header-right">
       <span class="vibe-tag">#wadervibes</span>
       <span class="nav-badge">Nationwide Shipping Kenya</span>
+      <button type="button" id="open-track-header" class="track-order-chip" aria-label="Track Order">
+        <span class="chip-text">Track Order</span>
+        <svg class="modified-truck-icon" viewBox="0 0 28 24" aria-hidden="true">
+          <line x1="1.5" y1="8" x2="5.5" y2="8" />
+          <line x1="2.5" y1="12" x2="5.5" y2="12" />
+          <path d="M7.5 6h10.5v10.5H7.5z" />
+          <path d="M18 9.5h3.8l2.7 3.2v3.8H18V9.5z" />
+          <circle cx="11" cy="18.2" r="2.2" />
+          <circle cx="21" cy="18.2" r="2.2" />
+        </svg>
+      </button>
       <div id="curr-switch" style="display:inline-flex;background:rgba(7,19,13,.9);border:1px solid
 rgba(24,178,103,.35);border-radius:999px;padding:2px;">
 <button type="button" id="btn-kes" onclick="setCurrency('KES')" style=
@@ -1051,8 +1131,9 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
     </div>
   </section>
 
-    <footer>
-    &copy; 2026 WADER &bull; <strong>#wadervibes</strong> &bull; Official Store of <a href="https://tiktok.com/@king_wader" target="_blank" rel="noopener noreferrer">@king_wader</a> &bull;
+  <footer>
+    &copy; 2026 WADER &bull; <strong>#wadervibes</strong> &bull; Official Store of <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer">@king_wader</a> &bull;
+    <button type="button" id="open-track-modal" style="background:none;border:none;color:var(--accent);font:inherit;font-weight:700;cursor:pointer;text-decoration:underline;padding:0;">Track Order</button> &bull;
     <button type="button" id="open-cancel-modal" style="background:none;border:none;color:inherit;font:inherit;cursor:pointer;text-decoration:underline;padding:0;">Cancel Order</button>
   </footer>
 
@@ -1127,10 +1208,30 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
           <button type="button" class="btn btn-secondary" id="close-cancel-modal">Close</button>
           <button type="submit" class="btn" id="submit-cancel-btn" style="background:#dc2626;color:#fff;">Cancel Order</button>
         </div>
-      </form>
+            </form>
     </div>
   </div>
 
+  <!-- Track Order Modal -->
+  <div class="modal-backdrop" id="track-modal">
+    <div class="modal">
+      <h3>Track Your Drop</h3>
+      <p style="font-size:0.85rem;opacity:0.8;margin-bottom:12px;">
+        Enter your exact checkout name, phone number, email, and secret Order PIN to unlock your live order details.
+      </p>
+      <form id="track-order-form">
+        <input type="text" id="track-name" placeholder="Full Name (exact match from checkout)" required />
+        <input type="tel" id="track-phone" placeholder="Phone Number (e.g. 0712 345 678)" required />
+        <input type="email" id="track-email" placeholder="Checkout Email Address" required />
+        <input type="password" id="track-pin" placeholder="Your Secret Order PIN / Code" required />
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="close-track-modal">Close</button>
+          <button type="submit" class="btn" id="submit-track-btn">Unlock Order Details</button>
+        </div>
+      </form>
+      <div id="track-results" style="margin-top:14px; display:flex; flex-direction:column; gap:10px; max-height:280px; overflow-y:auto;"></div>
+    </div>
+  </div>
 
   <!-- Paystack Inline Checkout Script -->
   <script src="https://js.paystack.co/v1/inline.js"></script>
