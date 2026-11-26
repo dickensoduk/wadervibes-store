@@ -761,8 +761,45 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
 
   <main class="grid" id="product-grid"></main>
 
-  <!-- Creator POV & Social Community Hub -->
+    <!-- Creator POV & Social Community Hub -->
   <style>
+  @keyframes wcSlideIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-14px) scale(0.985);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  #wader-community-section .wc-card.wc-entering {
+    animation: wcSlideIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  #wader-community-section .wc-card.wc-exiting {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    overflow: hidden;
+    border-color: transparent;
+    transition: all 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  #wader-older-comments {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+  }
+  #wader-older-comments.open {
+    max-height: 2400px;
+    opacity: 1;
+  }
       /* Order Ref / Phone Input (Forest Green, No Blue) */
   #wader-community-section .wc-input-verify {
     flex: 1 1 195px;
@@ -1870,6 +1907,52 @@ async function handleStarClick(productTitle, isUnlocked) {
     box.style.color = isError ? "#fca5a5" : "#7ef9d0";
   }
 
+    let waderCommentsExpanded = false;
+  let lastTopCommentId = null;
+
+  function buildCommentCardHTML(c) {
+    const likes = Number(c.likes || 0);
+    const dislikes = Number(c.dislikes || 0);
+    const total = likes + dislikes;
+    const likePct = total > 0 ? Math.round((likes / total) * 100) : 0;
+    const dislikePct = total > 0 ? Math.round((dislikes / total) * 100) : 0;
+
+    const badgeHTML = c.verified
+      ? `<span title="Verified Delivered Customer" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:999px;background:rgba(251,191,36,0.12);border:1px solid rgba(252,211,77,0.7);box-shadow:0 0 8px rgba(251,191,36,0.45);margin-left:6px;vertical-align:middle;">${CROWN_SVG}</span>`
+      : "";
+
+    return `
+      <div class="wc-card">
+        <div class="wc-card-header">
+          <span style="display:inline-flex;align-items:center;">${escapeHTML(c.customer_name)}${badgeHTML}</span>
+          <span style="color:#9eb5a7;font-weight:400;">${escapeHTML((c.created_at || "").slice(0, 10))}</span>
+        </div>
+        <div class="wc-card-body">${escapeHTML(c.comment)}</div>
+        <div class="wc-actions">
+          <button type="button" data-cid="${c.id}" data-vote="like" class="wader-vote-btn wc-vote-like">
+            ${THUMB_UP_SVG} Support <span>${likes} (${likePct}%)</span>
+          </button>
+          <button type="button" data-cid="${c.id}" data-vote="dislike" class="wader-vote-btn wc-vote-dislike">
+            ${THUMB_DOWN_SVG} Dislike <span>${dislikes} (${dislikePct}%)</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  window.toggleOlderWaderComments = function () {
+    waderCommentsExpanded = !waderCommentsExpanded;
+    const drawer = document.getElementById("wader-older-comments");
+    const toggleBtn = document.getElementById("wader-toggle-comments-btn");
+    if (drawer) drawer.classList.toggle("open", waderCommentsExpanded);
+    if (toggleBtn) {
+      const count = toggleBtn.getAttribute("data-count") || "0";
+      toggleBtn.textContent = waderCommentsExpanded
+        ? `▲ Hide older comments (${count})`
+        : `▼ View ${count} older ${Number(count) === 1 ? "comment" : "comments"}`;
+    }
+  };
+
   async function renderWaderComments() {
     const listEl = document.getElementById("wader-comments-list");
     if (!listEl) return;
@@ -1884,35 +1967,51 @@ async function handleStarClick(productTitle, isUnlocked) {
         return;
       }
 
-      listEl.innerHTML = rows.map(c => {
-        const likes = Number(c.likes || 0);
-        const dislikes = Number(c.dislikes || 0);
-        const total = likes + dislikes;
-        const likePct = total > 0 ? Math.round((likes / total) * 100) : 0;
-        const dislikePct = total > 0 ? Math.round((dislikes / total) * 100) : 0;
+      const newest = rows;
+      const hasNewTopComment = lastTopCommentId !== null && newest.id !== lastTopCommentId;
 
-        const badgeHTML = c.verified
-          ? `<span title="Verified Delivered Customer" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:999px;background:rgba(251,191,36,0.12);border:1px solid rgba(252,211,77,0.7);box-shadow:0 0 8px rgba(251,191,36,0.45);margin-left:6px;vertical-align:middle;">${CROWN_SVG}</span>`
-          : "";
+      if (hasNewTopComment && !waderCommentsExpanded) {
+        const oldTopCard = listEl.querySelector(".wc-card");
+        if (oldTopCard) {
+          oldTopCard.classList.add("wc-exiting");
+          await new Promise(resolve => setTimeout(resolve, 400));
+        }
+      }
 
-        return `
-          <div class="wc-card">
-            <div class="wc-card-header">
-              <span style="display:inline-flex;align-items:center;">${escapeHTML(c.customer_name)}${badgeHTML}</span>
-              <span style="color:#9eb5a7;font-weight:400;">${escapeHTML((c.created_at || "").slice(0, 10))}</span>
-            </div>
-            <div class="wc-card-body">${escapeHTML(c.comment)}</div>
-            <div class="wc-actions">
-              <button type="button" data-cid="${c.id}" data-vote="like" class="wader-vote-btn wc-vote-like">
-                ${THUMB_UP_SVG} Support <span>${likes} (${likePct}%)</span>
-              </button>
-              <button type="button" data-cid="${c.id}" data-vote="dislike" class="wader-vote-btn wc-vote-dislike">
-                ${THUMB_DOWN_SVG} Dislike <span>${dislikes} (${dislikePct}%)</span>
-              </button>
-            </div>
-          </div>
-        `;
-      }).join("");
+      lastTopCommentId = newest.id;
+
+      const latestHTML = buildCommentCardHTML(newest);
+      const olderRows = rows.slice(1);
+
+      if (olderRows.length === 0) {
+        listEl.innerHTML = latestHTML;
+        if (hasNewTopComment) {
+          const newCard = listEl.querySelector(".wc-card");
+          if (newCard) newCard.classList.add("wc-entering");
+        }
+        return;
+      }
+
+      const olderHTML = olderRows.map(buildCommentCardHTML).join("");
+      const btnLabel = waderCommentsExpanded
+        ? `▲ Hide older comments (${olderRows.length})`
+        : `▼ View ${olderRows.length} older ${olderRows.length === 1 ? "comment" : "comments"}`;
+
+      listEl.innerHTML = `
+        ${latestHTML}
+        <button type="button" id="wader-toggle-comments-btn" data-count="${olderRows.length}" onclick="toggleOlderWaderComments()"
+          style="align-self:flex-start; background:#04110a; border:1px solid #1e4d34; color:#7ef9d0; border-radius:999px; padding:6px 14px; font-size:12px; font-weight:700; cursor:pointer;">
+          ${btnLabel}
+        </button>
+        <div id="wader-older-comments" class="${waderCommentsExpanded ? "open" : ""}">
+          ${olderHTML}
+        </div>
+      `;
+
+      if (hasNewTopComment) {
+        const newCard = listEl.querySelector(".wc-card");
+        if (newCard) newCard.classList.add("wc-entering");
+      }
     } catch (err) {
       listEl.innerHTML = `<div style="color:#9eb5a7;font-size:13px;">Waking up community feed... Post a comment or refresh in a few seconds.</div>`;
     }
