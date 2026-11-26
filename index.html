@@ -762,30 +762,160 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
   <main class="grid" id="product-grid"></main>
 
   <!-- Creator POV & Social Community Hub -->
-  <section class="wader-comments-box">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-    <div>
-      <span style="color: #25e080; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em;">#WADERVIBES COMMUNITY</span>
-      <h2 style="color: #f3f7f4; font-size: 1.25rem; margin-top: 0.2rem;">Drop Talk & Feedback</h2>
-    </div>
+  <style>
+  #wader-community-section {
+    position: relative;
+    z-index: 10;
+    background: #091d12;
+    border: 1px solid #163b27;
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin: 1.5rem 0;
+  }
+  #wader-community-section .wc-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #25e080;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+  #wader-community-section .wc-title {
+    color: #e8f5ee;
+    font-size: 1.25rem;
+    margin: 0 0 1rem 0;
+  }
+  #wader-community-section .wc-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  #wader-community-section .wc-input {
+    background: #04110a;
+    color: #e8f5ee;
+    border: 1px solid #163b27;
+    border-radius: 10px;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  #wader-community-section .wc-input::placeholder {
+    color: #6b8f7b;
+  }
+  #wader-community-section .wc-input:focus {
+    border-color: #25e080;
+    box-shadow: 0 0 0 2px rgba(37, 224, 128, 0.2);
+  }
+  #wader-community-section .wc-input-name {
+    flex: 1 1 180px;
+  }
+  #wader-community-section .wc-input-text {
+    flex: 3 1 280px;
+  }
+  #wader-community-section #wader-post-btn {
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
+    padding: 0.65rem 1.35rem;
+    border-radius: 10px;
+    border: none;
+    background: #1db954;
+    color: #04110a;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s ease, opacity 0.2s ease;
+  }
+  #wader-community-section #wader-post-btn:hover:not(:disabled) {
+    background: #25e080;
+  }
+  #wader-community-section #wader-post-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+  #wader-community-section #wader-comment-status {
+    display: none;
+    font-size: 0.85rem;
+    margin-bottom: 0.85rem;
+    padding: 0.55rem 0.85rem;
+    border-radius: 8px;
+  }
+  #wader-community-section #wader-comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  #wader-community-section .wc-card {
+    background: #04110a;
+    border: 1px solid #163b27;
+    border-radius: 10px;
+    padding: 12px;
+  }
+  #wader-community-section .wc-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #7ef9d0;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  #wader-community-section .wc-card-body {
+    font-size: 13.5px;
+    color: #e8f5ee;
+    line-height: 1.45;
+    margin-bottom: 10px;
+  }
+  #wader-community-section .wc-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  #wader-community-section .wc-vote-like {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    color: #7ef9d0;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  #wader-community-section .wc-vote-dislike {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(220, 38, 38, 0.14);
+    border: 1px solid rgba(220, 38, 38, 0.35);
+    color: #fca5a5;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+</style>
+
+<section id="wader-community-section">
+  <div class="wc-eyebrow">#WADERVIBES COMMUNITY</div>
+  <h2 class="wc-title">Drop Talk &amp; Feedback</h2>
+
+  <form id="wader-comment-form" class="wc-form">
+    <input id="c-name" class="wc-input wc-input-name" type="text" maxlength="50" placeholder="Your @handle or name" required />
+    <input id="c-text" class="wc-input wc-input-text" type="text" maxlength="280" placeholder="Drop your thoughts on the gear..." required />
+    <button type="submit" id="wader-post-btn">Post</button>
+  </form>
+
+  <div id="wader-comment-status"></div>
+
+  <div id="wader-comments-list">
+    <div style="color: #9eb5a7; font-size: 13px;">Loading drop talk...</div>
   </div>
-
-<form onsubmit="event.preventDefault(); submitWaderComment();" style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem;">
-  <input id="c-name" type="text" placeholder="Your @handle or name" required
-    style="flex: 1 1 160px; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid #163b27; background: #04110a; color: #e8f5ee; font-size: 0.9rem;" />
-  <input id="c-verify" type="text" placeholder="Order Ref or Phone (optional - gold crown)"
-    style="flex: 1 1 180px; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid #163b27; background: #04110a; color: #e8f5ee; font-size: 0.9rem;" />
-  <input id="c-text" type="text" placeholder="Drop your thoughts on the gear..." required
-    style="flex: 3 1 260px; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid #163b27; background: #04110a; color: #e8f5ee; font-size: 0.9rem;" />
-  <button type="submit" id="wader-post-btn"
-    style="padding: 0.65rem 1.25rem; border-radius: 10px; border: none; background: #1db954; color: #07130d; font-weight: 700; cursor: pointer;">
-    Post
-  </button>
-</form>
-
-  <div id="wader-comments-list" style="display: grid; gap: 0.75rem;"></div>
 </section>
-  
+
   <section class="creator-section">
     <div class="creator-card">
       <div class="creator-info">
@@ -1571,111 +1701,164 @@ async function handleStarClick(productTitle, isUnlocked) {
   loadRatings();
 </script>
 <script>
-const COMMENTS_API = "https://wadervibes-core.onrender.com/api/comments";
+(function () {
+  const COMMENTS_API = "https://wadervibes-core.onrender.com/api/comments";
 
-const THUMB_UP_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>`;
-const THUMB_DOWN_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l-2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/></svg>`;
-const CUSTOMER_BADGE = {
-  icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fcd34d" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18L4.5 7.5L9.5 12L12 5L14.5 12L19.5 7.5L22 18H2Z"/><path d="M3 21H21"/></svg>`,
-  tooltip: "Verified Delivered Customer"
-};
+  const THUMB_UP_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>`;
+  const THUMB_DOWN_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l-2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/></svg>`;
+  const CROWN_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fcd34d" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18L4.5 7.5L9.5 12L12 5L14.5 12L19.5 7.5L22 18H2Z"/><path d="M3 21H21"/></svg>`;
 
-async function renderWaderComments() {
-  const listEl = document.getElementById("wader-comments-list");
-  if (!listEl) return;
-  try {
-    const res = await fetch(`${COMMENTS_API}?t=${Date.now()}`, { cache: "no-store" });
-    if (!res.ok) return;
-    const rows = await res.json();
-    if (!Array.isArray(rows) || !rows.length) {
-      listEl.innerHTML = `<div style="color:#9eb5a7;font-size:13px;">No drop talk yet. Be the first to post!</div>`;
+  function escapeHTML(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function showCommentStatus(msg, isError) {
+    const box = document.getElementById("wader-comment-status");
+    if (!box) return;
+    if (!msg) {
+      box.style.display = "none";
       return;
     }
-    listEl.innerHTML = rows.map(c => {
-      const likes = Number(c.likes || 0);
-      const dislikes = Number(c.dislikes || 0);
-      const total = likes + dislikes;
-      const likePct = total > 0 ? Math.round((likes / total) * 100) : 0;
-      const dislikePct = total > 0 ? Math.round((dislikes / total) * 100) : 0;
-      const badgeHTML = c.verified
-        ? `<span title="${CUSTOMER_BADGE.tooltip}" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:999px;background:rgba(251,191,36,0.12);border:1px solid rgba(252,211,77,0.7);box-shadow:0 0 8px rgba(251,191,36,0.45);margin-left:6px;vertical-align:middle;">${CUSTOMER_BADGE.icon}</span>`
-        : "";
-      return `
-        <div style="background:#04110a;border:1px solid #163b27;border-radius:10px;padding:12px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#7ef9d0;font-weight:700;margin-bottom:4px;">
-            <span style="display:inline-flex;align-items:center;">${c.customer_name}${badgeHTML}</span>
-            <span style="color:#9eb5a7;font-weight:400;">${(c.created_at || "").slice(0, 10)}</span>
-          </div>
-          <div style="font-size:13.5px;color:#e8f5ee;line-height:1.45;margin-bottom:10px;">${c.comment}</div>
-          <div style="display:flex;gap:10px;align-items:center;">
-            <button type="button" onclick="voteWaderComment(${c.id}, 'like')"
-              style="display:inline-flex;align-items:center;gap:6px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.35);color:#7ef9d0;padding:4px 10px;border-radius:999px;font-size:12px;cursor:pointer;">
-              ${THUMB_UP_SVG} Support <span>${likes} (${likePct}%)</span>
-            </button>
-            <button type="button" onclick="voteWaderComment(${c.id}, 'dislike')"
-              style="display:inline-flex;align-items:center;gap:6px;background:rgba(220,38,38,0.14);border:1px solid rgba(220,38,38,0.35);color:#fca5a5;padding:4px 10px;border-radius:999px;font-size:12px;cursor:pointer;">
-              ${THUMB_DOWN_SVG} Dislike <span>${dislikes} (${dislikePct}%)</span>
-            </button>
-          </div>
-        </div>
-      `;
-    }).join("");
-  } catch (err) {
-    console.warn("Failed to load comments:", err);
-  }
-}
-
-async function voteWaderComment(id, type) {
-  try {
-    const res = await fetch(`${COMMENTS_API}/${id}/react`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type })
-    });
-    if (res.ok) await renderWaderComments();
-  } catch (err) {}
-}
-
-async function submitWaderComment() {
-  const nameInput = document.getElementById("c-name");
-  const verifyInput = document.getElementById("c-verify");
-  const textInput = document.getElementById("c-text");
-  const btn = document.getElementById("wader-post-btn");
-  const customer_name = (nameInput?.value || "").trim();
-  const verify_token = (verifyInput?.value || "").trim();
-  const comment = (textInput?.value || "").trim();
-
-  if (!customer_name || !comment) {
-    alert("Enter your handle/name and a comment first.");
-    return;
+    box.style.display = "block";
+    box.textContent = msg;
+    box.style.background = isError ? "rgba(220,38,38,0.16)" : "rgba(16,185,129,0.16)";
+    box.style.border = isError ? "1px solid rgba(220,38,38,0.45)" : "1px solid rgba(37,224,128,0.45)";
+    box.style.color = isError ? "#fca5a5" : "#7ef9d0";
   }
 
-  btn.disabled = true;
-  btn.textContent = "Posting...";
-  try {
-    const res = await fetch(COMMENTS_API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ customer_name, comment, verify_token })
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      alert(data.error || "Could not post comment.");
+  async function renderWaderComments() {
+    const listEl = document.getElementById("wader-comments-list");
+    if (!listEl) return;
+
+    try {
+      const res = await fetch(`${COMMENTS_API}?t=${Date.now()}`, { cache: "no-store" });
+      if (!res.ok) throw new Error("Server waking up");
+      const rows = await res.json();
+
+      if (!Array.isArray(rows) || rows.length === 0) {
+        listEl.innerHTML = `<div style="color:#9eb5a7;font-size:13px;">No drop talk yet. Be the first to post!</div>`;
+        return;
+      }
+
+      listEl.innerHTML = rows.map(c => {
+        const likes = Number(c.likes || 0);
+        const dislikes = Number(c.dislikes || 0);
+        const total = likes + dislikes;
+        const likePct = total > 0 ? Math.round((likes / total) * 100) : 0;
+        const dislikePct = total > 0 ? Math.round((dislikes / total) * 100) : 0;
+
+        const badgeHTML = c.verified
+          ? `<span title="Verified Delivered Customer" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:999px;background:rgba(251,191,36,0.12);border:1px solid rgba(252,211,77,0.7);box-shadow:0 0 8px rgba(251,191,36,0.45);margin-left:6px;vertical-align:middle;">${CROWN_SVG}</span>`
+          : "";
+
+        return `
+          <div class="wc-card">
+            <div class="wc-card-header">
+              <span style="display:inline-flex;align-items:center;">${escapeHTML(c.customer_name)}${badgeHTML}</span>
+              <span style="color:#9eb5a7;font-weight:400;">${escapeHTML((c.created_at || "").slice(0, 10))}</span>
+            </div>
+            <div class="wc-card-body">${escapeHTML(c.comment)}</div>
+            <div class="wc-actions">
+              <button type="button" data-cid="${c.id}" data-vote="like" class="wader-vote-btn wc-vote-like">
+                ${THUMB_UP_SVG} Support <span>${likes} (${likePct}%)</span>
+              </button>
+              <button type="button" data-cid="${c.id}" data-vote="dislike" class="wader-vote-btn wc-vote-dislike">
+                ${THUMB_DOWN_SVG} Dislike <span>${dislikes} (${dislikePct}%)</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    } catch (err) {
+      listEl.innerHTML = `<div style="color:#9eb5a7;font-size:13px;">Waking up community feed... Post a comment or refresh in a few seconds.</div>`;
+    }
+  }
+
+  async function handleCommentSubmit(e) {
+    e.preventDefault();
+    const section = document.getElementById("wader-community-section");
+    const nameInput = section?.querySelector("#c-name");
+    const textInput = section?.querySelector("#c-text");
+    const btn = section?.querySelector("#wader-post-btn");
+
+    const customer_name = (nameInput?.value || "").trim();
+    const comment = (textInput?.value || "").trim();
+
+    if (!customer_name || !comment) {
+      showCommentStatus("Please enter both your handle/name and a comment.", true);
       return;
     }
-    textInput.value = "";
-    if (verifyInput) verifyInput.value = "";
-    await renderWaderComments();
-  } catch (err) {
-    alert("Network error posting comment. Please try again.");
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "Post";
-  }
-}
 
-renderWaderComments();
+    btn.disabled = true;
+    btn.textContent = "Posting...";
+    showCommentStatus("Sending to Wadervibes server...", false);
+
+    try {
+      const res = await fetch(COMMENTS_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customer_name, comment })
+      });
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        showCommentStatus(data.error || "Could not post comment. Try again.", true);
+        return;
+      }
+
+      textInput.value = "";
+      showCommentStatus("Posted to Drop Talk!", false);
+      setTimeout(() => showCommentStatus("", false), 3000);
+      await renderWaderComments();
+    } catch (err) {
+      showCommentStatus("Network error—Render server may still be waking up. Tap Post again.", true);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Post";
+    }
+  }
+
+  function initWaderCommunity() {
+    const section = document.getElementById("wader-community-section");
+    if (!section) return;
+
+    const form = section.querySelector("#wader-comment-form");
+    if (form) form.addEventListener("submit", handleCommentSubmit);
+
+    const listEl = section.querySelector("#wader-comments-list");
+    if (listEl) {
+      listEl.addEventListener("click", async (e) => {
+        const voteBtn = e.target.closest(".wader-vote-btn");
+        if (!voteBtn) return;
+        const cid = voteBtn.getAttribute("data-cid");
+        const type = voteBtn.getAttribute("data-vote");
+        voteBtn.disabled = true;
+        try {
+          const res = await fetch(`${COMMENTS_API}/${cid}/react`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ type })
+          });
+          if (res.ok) await renderWaderComments();
+        } finally {
+          voteBtn.disabled = false;
+        }
+      });
+    }
+
+    renderWaderComments();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initWaderCommunity);
+  } else {
+    initWaderCommunity();
+  }
+})();
 </script>
 </body>
 </html>
-
