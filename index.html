@@ -1039,20 +1039,20 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
         <input type="text" id="cust-name" placeholder="Full Name" required />
         <input type="tel" id="cust-phone" placeholder="M-Pesa / WhatsApp Phone (e.g. 0712 345 678)" required />
         <input type="email" id="cust-email" placeholder="Email Address (for receipt & tracking)" required />
-        <select id="cust-county" required>
-          <option value="Kisumu">Kisumu County (Pay on Delivery Available)</option>
-          <option value="Nairobi">Nairobi County (Pay on Delivery Available)</option>
+                <select id="cust-county" required>
+          <option value="Kisumu">Kisumu County</option>
+          <option value="Nairobi">Nairobi County</option>
           <option value="Mombasa">Mombasa County</option>
           <option value="Nakuru">Nakuru County</option>
           <option value="Uasin Gishu">Uasin Gishu (Eldoret)</option>
-          <option value="Kiambu">Kiambu County</option>
+          <option value="Kiambu">Kiambu County (Thika / Ruiru)</option>
           <option value="Machakos">Machakos County</option>
           <option value="Kajiado">Kajiado County</option>
           <option value="Kakamega">Kakamega County</option>
           <option value="Kisii">Kisii County</option>
           <option value="Other Kenya County">Other Kenya County (Nationwide Courier)</option>
         </select>
-        <input type="text" id="cust-city" placeholder="Town / Estate / Area (e.g. Milimani, Westlands, Kilimani)" required />
+        <input type="text" id="cust-city" placeholder="Town / Estate / Area (e.g. Milimani, Westlands, Nyali)" required />
         <input type="text" id="cust-address" placeholder="Street / Building / Preferred Bus Courier Stage" required />
 
         <!-- Payment Method Selector -->
@@ -1063,7 +1063,7 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
           </div>
           <div class="pay-option" id="opt-pod" data-method="pod">
             <strong>Pay on Delivery</strong>
-            <span>Kisumu & Nairobi only</span>
+            <span id="pod-subtext">Same-day hub area only</span>
           </div>
         </div>
         <div class="pod-alert" id="pay-hint">
@@ -1258,10 +1258,12 @@ function setCurrency(curr) {
   });
 }
 
-    function updatePaymentEligibility() {
+        function updatePaymentEligibility() {
       const county = document.getElementById("cust-county").value;
-      const isPodEligible = county === "Kisumu" || county === "Nairobi";
+      const city = (document.getElementById("cust-city")?.value || "").trim();
+      const isPodEligible = isSameDayEligible(activeProduct, county, city);
       const podOpt = document.getElementById("opt-pod");
+      const podSub = document.getElementById("pod-subtext");
       const mpesaOpt = document.getElementById("opt-mpesa");
       const hint = document.getElementById("pay-hint");
       const submitBtn = document.getElementById("submit-order-btn");
@@ -1271,19 +1273,26 @@ function setCurrency(curr) {
       }
 
       podOpt.classList.toggle("selected", selectedPayMethod === "pod");
+      podOpt.style.opacity = isPodEligible ? "1" : "0.55";
       mpesaOpt.classList.toggle("selected", selectedPayMethod === "mpesa");
+
+      if (podSub) {
+        podSub.textContent = isPodEligible
+          ? `Available in ${city || county}`
+          : "Local hub area only";
+      }
 
       if (selectedPayMethod === "pod") {
         hint.className = "pod-alert";
-        hint.textContent = `Pay on Delivery enabled for ${county}! Pay via M-Pesa or Cash when the rider arrives.`;
+        hint.textContent = `Pay on Delivery enabled for ${city || county}! Pay via M-Pesa or Cash when the rider arrives.`;
         submitBtn.textContent = "Confirm Pay on Delivery Order";
       } else if (!isPodEligible) {
         hint.className = "pod-alert warn";
-        hint.textContent = `Pay on Delivery is available in Kisumu & Nairobi only. Complete your ${county} delivery via M-Pesa Express or Card below.`;
+        hint.textContent = `Pay on Delivery is only available when this drop's hub is in your area. Complete your ${county} courier order via M-Pesa Express or Card below.`;
         submitBtn.textContent = "Pay Now (M-Pesa / Card)";
       } else {
         hint.className = "pod-alert";
-        hint.textContent = "Pay instantly via M-Pesa Express or Card (or switch to Pay on Delivery for Kisumu & Nairobi).";
+        hint.textContent = `Store hub is in your area (${city || county})! Pay instantly via M-Pesa / Card or tap Pay on Delivery.`;
         submitBtn.textContent = "Pay Now (M-Pesa / Card)";
       }
     }
@@ -1295,8 +1304,9 @@ function setCurrency(curr) {
 
     document.getElementById("opt-pod").addEventListener("click", () => {
       const county = document.getElementById("cust-county").value;
-      if (county !== "Kisumu" && county !== "Nairobi") {
-        alert("Pay on Delivery is only available for Kisumu and Nairobi orders. Please select Kisumu/Nairobi or pay via M-Pesa / Card for upcountry courier delivery.");
+      const city = (document.getElementById("cust-city")?.value || "").trim();
+      if (!isSameDayEligible(activeProduct, county, city)) {
+        alert("Pay on Delivery is only available when this item's local hub is in your area. Please complete your order via M-Pesa / Card.");
         return;
       }
       selectedPayMethod = "pod";
