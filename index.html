@@ -939,12 +939,13 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
   <div class="wc-eyebrow">#WADERVIBES COMMUNITY</div>
   <h2 class="wc-title">Drop Talk &amp; Feedback</h2>
 
-    <form id="wader-comment-form" class="wc-form" onsubmit="return false;">
+    <form id="wader-comment-form" class="wc-form">
     <input id="c-name" class="wc-input wc-input-name" type="text" maxlength="50" placeholder="Your @handle or name" required />
     <input id="c-verify" class="wc-input wc-input-verify" type="text" maxlength="60" placeholder="Order Ref or Phone (optional - gold crown)" />
     <input id="c-text" class="wc-input wc-input-text" type="text" maxlength="280" placeholder="Drop your thoughts on the gear..." required />
     <button type="submit" id="wader-post-btn">Post</button>
-  </form> 
+  </form>
+
 
   <div id="wader-comment-status"></div>
 
@@ -1875,6 +1876,14 @@ async function handleStarClick(productTitle, isUnlocked) {
 
     const form = section.querySelector("#wader-comment-form");
     if (form) form.addEventListener("submit", handleCommentSubmit);
+    
+    const postBtn = section.querySelector("#wader-post-btn");
+    if (postBtn) {
+      postBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        handleCommentSubmit(e);
+      });
+    }
 
     const listEl = section.querySelector("#wader-comments-list");
     if (listEl) {
