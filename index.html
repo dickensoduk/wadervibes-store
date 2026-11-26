@@ -245,21 +245,13 @@
       color: var(--text-muted);
       letter-spacing: 0.03em;
     }
-        /* --- Soft, Gentle Flowing Kenyan Flag Glow Badge --- */
-    @keyframes kenyaSoftGlow {
+            /* --- Nationwide Shipping Kenya Pill: Hover -> Flowing Kenyan Flag on a Pole --- */
+    @keyframes kenyaFlagWave {
       0%, 100% {
-        background-position: 0% 50%, 0% 50%;
-        box-shadow:
-          -4px 0 12px rgba(220, 38, 38, 0.22),
-          0 0 10px rgba(255, 255, 255, 0.08),
-          4px 0 12px rgba(24, 178, 103, 0.24);
+        transform: translateX(0) skewY(0deg) scale(1);
       }
       50% {
-        background-position: 100% 50%, 100% 50%;
-        box-shadow:
-          -4px 0 14px rgba(24, 178, 103, 0.26),
-          0 0 12px rgba(255, 255, 255, 0.12),
-          4px 0 14px rgba(220, 38, 38, 0.22);
+        transform: translateX(0) skewY(-3.5deg) scale(1.03);
       }
     }
 
@@ -267,40 +259,71 @@
       position: relative;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      color: #f3f7f4;
-      padding: 0.34rem 0.92rem;
+      background: rgba(24, 178, 103, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(24, 178, 103, 0.35);
+      padding: 0.3rem 0.75rem;
       border-radius: 999px;
-      cursor: default;
-      user-select: none;
-      /* Muted, translucent Kenyan flag bands blended into dark forest green */
-      background:
-        linear-gradient(
-          180deg,
-          rgba(7, 19, 13, 0.92) 0%,
-          rgba(7, 19, 13, 0.92) 29%,
-          rgba(255, 255, 255, 0.16) 31%,
-          rgba(185, 28, 28, 0.34) 34%,
-          rgba(185, 28, 28, 0.34) 66%,
-          rgba(255, 255, 255, 0.16) 69%,
-          rgba(21, 128, 61, 0.38) 71%,
-          rgba(21, 128, 61, 0.38) 100%
-        ) padding-box,
-        linear-gradient(
-          90deg,
-          rgba(15, 23, 20, 0.8) 0%,
-          rgba(255, 255, 255, 0.45) 22%,
-          rgba(220, 38, 38, 0.55) 42%,
-          rgba(255, 255, 255, 0.45) 55%,
-          rgba(24, 178, 103, 0.6) 75%,
-          rgba(15, 23, 20, 0.8) 100%
-        ) border-box;
-      background-size: 100% 100%, 240% 240%;
-      border: 1.2px solid transparent;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
-      animation: kenyaSoftGlow 8s ease-in-out infinite;
+      font-weight: 600;
+      overflow: hidden;
+      cursor: pointer;
+      transition:
+        border-color 0.35s ease,
+        box-shadow 0.35s ease,
+        background 0.35s ease,
+        transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-badge .chip-text {
+      display: inline-block;
+      transition:
+        opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.36s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-badge .kenya-flag-icon {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      opacity: 0;
+      transform: translateX(-18px) scale(0.85);
+      transition:
+        opacity 0.34s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.35s ease;
+      pointer-events: none;
+    }
+
+    .nav-badge:hover,
+    .nav-badge:active,
+    .nav-badge:focus-visible {
+      transform: translateY(-1px);
+      background: radial-gradient(ellipse at 50% 0%, rgba(185, 28, 28, 0.22) 0%, rgba(7, 19, 13, 0.94) 90%);
+      border-color: rgba(255, 255, 255, 0.55);
+      box-shadow:
+        -5px 0 14px rgba(220, 38, 38, 0.32),
+        0 0 10px rgba(255, 255, 255, 0.18),
+        5px 0 14px rgba(24, 178, 103, 0.36);
+    }
+
+    .nav-badge:hover .chip-text,
+    .nav-badge:active .chip-text,
+    .nav-badge:focus-visible .chip-text {
+      opacity: 0;
+      transform: translateX(18px);
+    }
+
+    .nav-badge:hover .kenya-flag-icon,
+    .nav-badge:active .kenya-flag-icon,
+    .nav-badge:focus-visible .kenya-flag-icon {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      filter:
+        drop-shadow(-1.5px 0 4px rgba(220, 38, 38, 0.45))
+        drop-shadow(1.5px 0 4px rgba(24, 178, 103, 0.5));
+      animation: kenyaFlagWave 2.4s ease-in-out infinite 0.35s;
     }
 
     /* --- Track Order Button: Text Dissolves -> Hollow Glowing Blue Modified Truck --- */
@@ -840,7 +863,21 @@
     </a>
         <div class="header-right">
       <span class="vibe-tag">#wadervibes</span>
-      <span class="nav-badge">Nationwide Shipping Kenya</span>
+            <span class="nav-badge" tabindex="0" aria-label="Nationwide Shipping Kenya">
+        <span class="chip-text">Nationwide Shipping Kenya</span>
+        <svg class="kenya-flag-icon" viewBox="0 0 28 24" fill="none" aria-hidden="true">
+          <circle cx="5.5" cy="3.2" r="1.2" stroke="#e2e8f0" stroke-width="1.6" />
+          <line x1="5.5" y1="4.5" x2="5.5" y2="21" stroke="#e2e8f0" stroke-width="1.8" stroke-linecap="round" />
+          <path d="M7 5.2 Q12.5 3.6 17.5 5.2 T25.5 5.2 V8.3 Q20.5 9.9 15.5 8.3 T7 8.3 Z" fill="#0b0f0d" stroke="rgba(255,255,255,0.45)" stroke-width="0.6" />
+          <path d="M7 8.6 Q12.5 7 17.5 8.6 T25.5 8.6" stroke="#ffffff" stroke-width="0.9" />
+          <path d="M7 9.1 Q12.5 7.5 17.5 9.1 T25.5 9.1 V12.5 Q20.5 14.1 15.5 12.5 T7 12.5 Z" fill="#dc2626" />
+          <path d="M7 12.8 Q12.5 11.2 17.5 12.8 T25.5 12.8" stroke="#ffffff" stroke-width="0.9" />
+          <path d="M7 13.3 Q12.5 11.7 17.5 13.3 T25.5 13.3 V16.4 Q20.5 18 15.5 16.4 T7 16.4 Z" fill="#16a34a" />
+          <line x1="14.2" y1="6.8" x2="18.2" y2="14.8" stroke="#ffffff" stroke-width="0.85" stroke-linecap="round" />
+          <line x1="18.2" y1="6.8" x2="14.2" y2="14.8" stroke="#ffffff" stroke-width="0.85" stroke-linecap="round" />
+          <ellipse cx="16.2" cy="10.8" rx="1.5" ry="2.8" fill="#b91c1c" stroke="#ffffff" stroke-width="0.75" />
+        </svg>
+      </span>
       <button type="button" id="open-track-header" class="track-order-chip" aria-label="Track Order">
         <span class="chip-text">Track Order</span>
         <svg class="modified-truck-icon" viewBox="0 0 28 24" aria-hidden="true">
