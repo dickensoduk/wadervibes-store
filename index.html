@@ -763,6 +763,42 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
 
   <!-- Creator POV & Social Community Hub -->
   <style>
+      /* Order Ref / Phone Input (Forest Green, No Blue) */
+  #wader-community-section .wc-input-verify {
+    flex: 1 1 195px;
+    background: #04110a;
+    color: #e8f5ee;
+    border: 1px solid #163b27;
+    border-radius: 10px;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  #wader-community-section .wc-input-verify::placeholder {
+    color: #6b8f7b;
+  }
+
+  #wader-community-section .wc-input-verify:focus {
+    border-color: #25e080;
+    box-shadow: 0 0 0 2px rgba(37, 224, 128, 0.2);
+  }
+
+  /* Verified Delivered Gold Crown Badge */
+  #wader-community-section .wc-crown-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    background: rgba(251, 191, 36, 0.12);
+    border: 1px solid rgba(252, 211, 77, 0.7);
+    box-shadow: 0 0 8px rgba(251, 191, 36, 0.45);
+    margin-left: 6px;
+    vertical-align: middle;
+  }
   #wader-community-section {
     position: relative;
     z-index: 10;
@@ -1778,14 +1814,16 @@ async function handleStarClick(productTitle, isUnlocked) {
     }
   }
 
-  async function handleCommentSubmit(e) {
+    async function handleCommentSubmit(e) {
     e.preventDefault();
     const section = document.getElementById("wader-community-section");
     const nameInput = section?.querySelector("#c-name");
+    const verifyInput = section?.querySelector("#c-verify");
     const textInput = section?.querySelector("#c-text");
     const btn = section?.querySelector("#wader-post-btn");
 
     const customer_name = (nameInput?.value || "").trim();
+    const verify_token = (verifyInput?.value || "").trim();
     const comment = (textInput?.value || "").trim();
 
     if (!customer_name || !comment) {
@@ -1801,7 +1839,7 @@ async function handleStarClick(productTitle, isUnlocked) {
       const res = await fetch(COMMENTS_API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customer_name, comment })
+        body: JSON.stringify({ customer_name, comment, verify_token })
       });
       const data = await res.json().catch(() => ({}));
 
@@ -1811,8 +1849,17 @@ async function handleStarClick(productTitle, isUnlocked) {
       }
 
       textInput.value = "";
-      showCommentStatus("Posted to Drop Talk!", false);
-      setTimeout(() => showCommentStatus("", false), 3000);
+      if (verifyInput) verifyInput.value = "";
+
+      if (verify_token && data.verified) {
+        showCommentStatus("Posted with Verified Delivered Gold Crown!", false);
+      } else if (verify_token && !data.verified) {
+        showCommentStatus("Posted! (Gold crown unlocks once your order status is Delivered.)", false);
+      } else {
+        showCommentStatus("Posted to Drop Talk!", false);
+      }
+
+      setTimeout(() => showCommentStatus("", false), 4500);
       await renderWaderComments();
     } catch (err) {
       showCommentStatus("Network error—Render server may still be waking up. Tap Post again.", true);
@@ -1820,7 +1867,6 @@ async function handleStarClick(productTitle, isUnlocked) {
       btn.disabled = false;
       btn.textContent = "Post";
     }
-  }
 
   function initWaderCommunity() {
     const section = document.getElementById("wader-community-section");
