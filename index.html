@@ -1575,6 +1575,13 @@ async function handleStarClick(productTitle, isUnlocked) {
 
   const THUMB_UP_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>`;
   const THUMB_DOWN_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/></svg>`;
+  const CUSTOMER_BADGE = {
+  icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fcd34d" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 6px rgba(252,211,77,0.85));flex-shrink:0;">
+    <path d="M2 18L4 7l5.5 4.5L12 5l2.5 6.5L20 7l2 11H2z"/>
+    <path d="M3 21h18"/>
+  </svg>`,
+  tooltip: "Verified Delivered Customer"
+};
 
   async function renderWaderComments() {
     const listEl = document.getElementById("wader-comments-list");
@@ -1597,12 +1604,16 @@ async function handleStarClick(productTitle, isUnlocked) {
         const likePct = total > 0 ? Math.round((likes / total) * 100) : 0;
         const dislikePct = total > 0 ? Math.round((dislikes / total) * 100) : 0;
 
-        return `
-          <div style="background:#04110a;border:1px solid #163b27;border-radius:10px;padding:12px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#7ef9d0;font-weight:700;margin-bottom:5px;">
-              <span>${c.customer_name}</span>
-              <span style="color:#9eb5a7;font-weight:400;">${c.created_at || ""}</span>
-            </div>
+              const badgeHTML = c.verified
+        ? `<span title="${CUSTOMER_BADGE.tooltip}" style="display:inline-flex;align-items:center;justify-content:center;margin-left:6px;vertical-align:middle;">${CUSTOMER_BADGE.icon}</span>`
+        : "";
+
+      return `
+        <div style="background:#04110a;border:1px solid #163b27;border-radius:10px;padding:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#7ef9d0;font-weight:700;margin-bottom:6px;">
+            <span style="display:inline-flex;align-items:center;">${c.customer_name}${badgeHTML}</span>
+            <span style="color:#9eb5a7;font-weight:400;">${c.created_at || ""}</span>
+          </div>
             <div style="font-size:13.5px;color:#e8f5ee;line-height:1.45;margin-bottom:10px;">${c.comment}</div>
             <div style="display:flex;gap:10px;align-items:center;">
               <button type="button" onclick="voteWaderComment(${c.id}, 'like')"
@@ -1634,35 +1645,38 @@ async function handleStarClick(productTitle, isUnlocked) {
   }
 
   async function submitWaderComment() {
-    const nameInput = document.getElementById("c-name");
-    const textInput = document.getElementById("c-text");
-    const btn = document.getElementById("wader-post-btn");
-    const customer_name = (nameInput?.value || "").trim();
-    const comment = (textInput?.value || "").trim();
+      const nameInput = document.getElementById("c-name");
+  const verifyInput = document.getElementById("c-verify");
+  const textInput = document.getElementById("c-text");
+  const btn = document.getElementById("wader-post-btn");
+  const customer_name = (nameInput?.value || "").trim();
+  const verify_token = (verifyInput?.value || "").trim();
+  const comment = (textInput?.value || "").trim();
 
-    if (!customer_name || !comment) {
-      alert("Enter both your @handle/name and comment first.");
-      return;
+  if (!customer_name || !comment) {
+    alert("Enter both your @handle/name and comment first.");
+    return;
+  }
+
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Posting...";
+  }
+
+  try {
+    const res = await fetch(COMMENTS_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ customer_name, comment, verify_token })
+    });
+
+    if (res.ok) {
+      if (verifyInput) verifyInput.value = "";
+      if (textInput) textInput.value = "";
+      await renderWaderComments();
+    } else {
+      alert("Server error: " + res.status);
     }
-
-    if (btn) {
-      btn.disabled = true;
-      btn.textContent = "Posting...";
-    }
-
-    try {
-      const res = await fetch(COMMENTS_API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customer_name, comment })
-      });
-
-      if (res.ok) {
-        if (textInput) textInput.value = "";
-        await renderWaderComments();
-      } else {
-        alert("Server error: " + res.status);
-      }
     } catch (err) {
       alert("Network error: " + err.message);
     } finally {
