@@ -1360,33 +1360,67 @@ function setCurrency(curr) {
       refreshCheckoutSummary();
     }
 
+        function isSameDayEligible(product, county, city) {
+      if (!product || !product.tag) return false;
+      const tag = String(product.tag).toLowerCase();
+      if (!tag.includes("same-day") && !tag.includes("hub")) return false;
+
+      const loc = `${county || ""} ${city || ""}`.toLowerCase();
+      const hubMap = {
+        kisumu: ["kisumu"],
+        nairobi: ["nairobi"],
+        mombasa: ["mombasa"],
+        nakuru: ["nakuru"],
+        eldoret: ["eldoret", "uasin gishu"],
+        thika: ["thika", "kiambu"],
+        kisii: ["kisii"],
+        kakamega: ["kakamega"]
+      };
+
+      for (const [hubKey, keywords] of Object.entries(hubMap)) {
+        if (tag.includes(hubKey) && keywords.some(kw => loc.includes(kw))) {
+          return true;
+        }
+      }
+      return false;
+    }
+
     function refreshCheckoutSummary() {
       if (!activeProduct) return;
       const { qty, county, rawSubtotalUsd, actualDeliveryUsd, rebateUsd, finalTotalUsd, qualifiesFree } = getCheckoutTotals();
+      const cityVal = (document.getElementById("cust-city")?.value || "").trim();
+      const sameDay = isSameDayEligible(activeProduct, county, cityVal);
       const banner = document.getElementById("delivery-banner");
       const metaEl = document.getElementById("modal-item-meta");
 
       if (banner) {
+        const speedPrefix = sameDay
+          ? `⚡ <strong>Same-Day Rider Dispatch</strong> available in <strong>${cityVal || county}</strong>! `
+          : `📦 <strong>2–5 Working Days</strong> nationwide courier to <strong>${county}</strong>. `;
+
         if (qualifiesFree) {
           banner.style.background = "rgba(16,185,129,0.18)";
           banner.style.borderColor = "#10b981";
-          banner.innerHTML = `🎉 <strong>FREE Delivery to ${county}!</strong> (${formatPrice(rebateUsd)} baked-in delivery removed for ordering ≥ ${formatPrice(FREE_DELIVERY_THRESHOLD_USD)})`;
+          banner.innerHTML = `${speedPrefix}🎉 <strong>FREE Delivery!</strong> (${formatPrice(rebateUsd)} baked-in shipping removed for ordering ≥ ${formatPrice(FREE_DELIVERY_THRESHOLD_USD)})`;
         } else {
           const remainingUsd = +(FREE_DELIVERY_THRESHOLD_USD - rawSubtotalUsd).toFixed(2);
           const distNote = rebateUsd > 0
-            ? `Distance rate for <strong>${county}</strong>: <strong>${formatPrice(actualDeliveryUsd)}</strong> (saved <strong>${formatPrice(rebateUsd)}</strong> off baked-in shipping)`
-            : `Distance rate for <strong>${county}</strong>: <strong>${formatPrice(actualDeliveryUsd)}</strong> (included in price)`;
+            ? `Rate: <strong>${formatPrice(actualDeliveryUsd)}</strong> (saved <strong>${formatPrice(rebateUsd)}</strong>)`
+            : `Rate: <strong>${formatPrice(actualDeliveryUsd)}</strong> (included)`;
           banner.style.background = "rgba(16,185,129,0.10)";
           banner.style.borderColor = "rgba(16,185,129,0.35)";
-          banner.innerHTML = `🚚 ${distNote} • Add <strong>${formatPrice(remainingUsd)}</strong> more for <strong>100% FREE Delivery</strong>`;
+          banner.innerHTML = `${speedPrefix}${distNote} • Add <strong>${formatPrice(remainingUsd)}</strong> more for <strong>100% FREE Delivery</strong>`;
         }
       }
 
       if (metaEl) {
-        const tag = qualifiesFree ? "FREE Delivery" : `${county} Rate`;
-        metaEl.textContent = `Option: ${activeSize} • Qty: ${qty} • Total: ${formatPrice(finalTotalUsd)} (${tag})`;
+        const speedTag = sameDay ? "⚡ Same-Day" : `${county} Courier`;
+        const priceTag = qualifiesFree ? "FREE Delivery" : speedTag;
+        metaEl.textContent = `Option: ${activeSize} • Qty: ${qty} • Total: ${formatPrice(finalTotalUsd)} (${priceTag})`;
       }
     }
+
+    document.getElementById("cust-city").addEventListener("input", refreshCheckoutSummary);
 
     document.getElementById("checkout-form").addEventListener("submit", async (e) => {
   e.preventDefault();
