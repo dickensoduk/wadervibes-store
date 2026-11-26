@@ -1716,7 +1716,7 @@ function setCurrency(curr) {
        city: city,
        county: county,
        order_pin: orderPin
-     })
+     }
     callback: function(response) {
       document.getElementById("checkout-modal").classList.remove("active");
       alert(`Payment successful! Reference: ${response.reference}. Your @king_wader order is being prepared for delivery.`);
