@@ -1627,13 +1627,13 @@ async function handleStarClick(productTitle, isUnlocked) {
             </div>
           </div>
         `;
-      }).join("");
-    } catch (err) {
-      console.warn("Failed to load comments:", err);
-    }
+          }).join("");
+  } catch (err) {
+    console.warn("Failed to load comments:", err);
   }
+}
 
-  async function voteWaderComment(id, type) {
+async function voteWaderComment(id, type) {
     try {
       const res = await fetch(`${COMMENTS_API}/${id}/react`, {
         method: "POST",
