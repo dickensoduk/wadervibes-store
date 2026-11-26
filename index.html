@@ -770,17 +770,18 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
     </div>
   </div>
 
-  <form onsubmit="event.preventDefault(); submitWaderComment();" style="display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.25rem;">
-    <input id="c-name" type="text" placeholder="Your @handle or name" required
-      style="flex: 1 1 160px; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid rgba(37,224,128,0.35); background: #07130d; color: #f3f7f4;">
-    <input id="c-verify" type="text" placeholder="Order Ref or Phone (optional — gold crown)"
-       style="flex: 1 1 180px; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid rgba(126,249,208,0.2); background: #04110a; color: #e8f5ee;">
-    <input id="c-text" type="text" placeholder="Drop your thoughts on the gear..." required
-      style="flex: 3 1 260px; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid rgba(37,224,128,0.35); background: #07130d; color: #f3f7f4;">
-    <button type="button" id="wader-post-btn" onclick="submitWaderComment()"
-      style="padding: 0.65rem 1.25rem; border-radius: 10px; border: none; background: #1db267; color: #07130d; font-weight: 800; cursor: pointer;">
-      Post
-    </button>
+<form onsubmit="event.preventDefault(); submitWaderComment();" style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem;">
+  <input id="c-name" type="text" placeholder="Your @handle or name" required
+    style="flex: 1 1 160px; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid rgba(37,224,128,0.25); background: rgba(15,23,42,0.8); color: #f8fafc; font-size: 0.9rem;" />
+  <input id="c-verify" type="text" placeholder="Order Ref or Phone (optional - gold crown)"
+    style="flex: 1 1 180px; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid rgba(126,249,165,0.25); background: rgba(15,23,42,0.8); color: #f8fafc; font-size: 0.9rem;" />
+  <input id="c-text" type="text" placeholder="Drop your thoughts on the gear..." required
+    style="flex: 3 1 260px; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid rgba(37,224,128,0.25); background: rgba(15,23,42,0.8); color: #f8fafc; font-size: 0.9rem;" />
+  <button type="submit" id="wader-post-btn"
+    style="padding: 0.65rem 1.25rem; border-radius: 10px; border: none; background: #1db954; color: #07130d; font-weight: 700; cursor: pointer;">
+    Post
+  </button>
+</form>
   </form>
 
   <div id="wader-comments-list" style="display: grid; gap: 0.75rem;"></div>
