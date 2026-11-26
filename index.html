@@ -1316,11 +1316,66 @@
   <!-- Paystack Inline Checkout Script -->
   <script src="https://js.paystack.co/v1/inline.js"></script>
   <script>
-  const BACKEND_URL = "https://wadervibes-core.onrender.com";
+  const BACKEND_URL = "https://onrender.com";
   const API_BASE = BACKEND_URL;
   const PAYSTACK_PUBLIC_KEY = "pk_live_481e93ab1a25495849f6de5800fa2e58eea298b5";
   const USD_TO_KES = 130;
   let currentCurrency = "KES";
+  let sharedAudioCtx = null;
+
+  function unlockAudio() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!sharedAudioCtx) sharedAudioCtx = new AudioCtx();
+      if (sharedAudioCtx.state === "suspended") sharedAudioCtx.resume();
+    } catch (e) {}
+  }
+
+  function playKaChingSound() {
+    try {
+      unlockAudio();
+      const ctx = sharedAudioCtx;
+      if (!ctx) return;
+      const now = ctx.currentTime;
+
+      const bufferSize = ctx.sampleRate * 0.08;
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.02));
+      }
+      const whiteNoise = ctx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      const filter = ctx.createBiquadFilter();
+      filter.type = "highpass";
+      filter.frequency.value = 1800;
+      const noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.35, now);
+      whiteNoise.connect(filter);
+      filter.connect(noiseGain);
+      noiseGain.connect(ctx.destination);
+      whiteNoise.start(now);
+
+      const freqs = [1567.98, 2093.0, 2637.02, 3135.96];
+      freqs.forEach((f, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(f, now + 0.07);
+
+        gain.gain.setValueAtTime(0.001, now + 0.07);
+        gain.gain.exponentialRampToValueAtTime(0.22 / (idx + 1), now + 0.085);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.15);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + 0.07);
+        osc.stop(now + 1.2);
+      });
+    } catch (e) {
+      console.warn("Audio playback blocked:", e);
+    }
+  }
 
 function formatPrice(usdAmount) {
   const usd = Number(usdAmount || 0);
@@ -1768,11 +1823,13 @@ function setCurrency(curr) {
     return;
   }
 
-  // 2. Handle M-Pesa / Card via Paystack
+    // 2. Handle M-Pesa / Card via Paystack
   if (typeof PaystackPop === "undefined" || PAYSTACK_PUBLIC_KEY.includes("replace_with")) {
     alert("Order preview ready! Add your Paystack Public Key inside index.html (and enable M-Pesa in your Paystack dashboard).");
     return;
   }
+
+  unlockAudio();
 
   const kesAmount = Math.round((Number(priceVal || 0) * USD_TO_KES) / 10) * 10;
 
@@ -1797,6 +1854,7 @@ function setCurrency(curr) {
     },
     callback: function(response) {
       document.getElementById("checkout-modal").classList.remove("active");
+      playKaChingSound();
       alert(`Payment successful! Reference: ${response.reference}. Your @king_wader order is being prepared for delivery.`);
       loadProducts();
     },
