@@ -1962,12 +1962,12 @@ async function handleStarClick(productTitle, isUnlocked) {
       if (!res.ok) throw new Error("Server waking up");
       const rows = await res.json();
 
-      if (!Array.isArray(rows) || rows.length === 0) {
+            if (!Array.isArray(rows) || rows.length === 0) {
         listEl.innerHTML = `<div style="color:#9eb5a7;font-size:13px;">No drop talk yet. Be the first to post!</div>`;
         return;
       }
 
-      const newest = rows;
+      const newest = rows.at(0);
       const hasNewTopComment = lastTopCommentId !== null && newest.id !== lastTopCommentId;
 
       if (hasNewTopComment && !waderCommentsExpanded) {
