@@ -1153,9 +1153,11 @@ rgba(24,178,103,.35);border-radius:999px;padding:2px;">
         </div>
         <div id="delivery-banner" style="font-size:0.8rem; padding:8px 12px; border-radius:8px; margin-bottom:12px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.35); color:#bbf7d0;"></div>
 
-        <input type="text" id="cust-name" placeholder="Full Name" required />
+        <input type="text" id="cust-name" placeholder="Full Name (remember exact spelling & caps to track later)" required />
         <input type="tel" id="cust-phone" placeholder="M-Pesa / WhatsApp Phone (e.g. 0712 345 678)" required />
         <input type="email" id="cust-email" placeholder="Email Address (for receipt & tracking)" required />
+        <input type="text" id="cust-pin" minlength="4" maxlength="20" placeholder="Create Secret Order PIN / Code (min 4 chars — to track later)" required />
+
                 <select id="cust-county" required>
           <option value="Kisumu">Kisumu County</option>
           <option value="Nairobi">Nairobi County</option>
@@ -1633,6 +1635,7 @@ function setCurrency(curr) {
   const customerName = document.getElementById("cust-name").value.trim();
   const customerPhone = document.getElementById("cust-phone").value.trim();
   const customerEmail = document.getElementById("cust-email").value.trim();
+  const orderPin = document.getElementById("cust-pin").value.trim();
   const shippingAddress = document.getElementById("cust-address").value.trim();
   const city = document.getElementById("cust-city").value.trim();
   const county = document.getElementById("cust-county").value;
@@ -1661,7 +1664,9 @@ function setCurrency(curr) {
           customer_email: customerEmail,
           shipping_address: shippingAddress,
           city: city,
-          county: county
+          county: county,
+          order_pin: orderPin
+     })
         })
       });
 
@@ -1709,9 +1714,10 @@ function setCurrency(curr) {
       customer_phone: customerPhone,
       customer_email: customerEmail,
       shipping_address: shippingAddress,
-      city: city,
-      county: county
-    },
+       city: city,
+       county: county,
+       order_pin: orderPin
+     })
     callback: function(response) {
       document.getElementById("checkout-modal").classList.remove("active");
       alert(`Payment successful! Reference: ${response.reference}. Your @king_wader order is being prepared for delivery.`);
