@@ -1716,8 +1716,9 @@ function setCurrency(curr) {
       const item = ALL_PRODUCTS.find((p) => String(p.id) === String(btn.dataset.id));
       if (!item) return;
 
-      if (item.fulfillment_type === "affiliate" && item.external_url) {
-        window.open(item.external_url, "_blank", "noopener,noreferrer");
+      const partnerLink = (item.affiliate_url || item.external_url || "").trim();
+      if (partnerLink && /^https?:\/\//i.test(partnerLink)) {
+        window.open(partnerLink, "_blank", "noopener,noreferrer");
         return;
       }
 
