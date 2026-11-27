@@ -903,13 +903,19 @@
 
   <!-- Search & Category Filter Bar -->
   <div class="controls-bar">
-    <div class="filter-pills" id="category-pills">
-<button type="button" class="filter-btn active" data-category="all">All Drops</button>
-<button type="button" class="filter-btn" data-category="kicks & slides">Kicks & Slides</button>
-<button type="button" class="filter-btn" data-category="hoodies & outerwear">Hoodies & Outerwear</button>
-<button type="button" class="filter-btn" data-category="tees & tops">Tees & Tops</button>
-<button type="button" class="filter-btn" data-category="bottoms & cargos">Bottoms & Cargos</button>
-<button type="button" class="filter-btn" data-category="accessories & scarves">Accessories & Scarves</button>
+        <div class="filter-pills" id="category-pills">
+      <button type="button" class="filter-btn active" data-category="all">All Drops</button>
+      <button type="button" class="filter-btn" data-category="kicks & slides">Kicks &amp; Slides</button>
+      <button type="button" class="filter-btn" data-category="tracksuits & sets">Tracksuits &amp; Sets</button>
+      <button type="button" class="filter-btn" data-category="hoodies & outerwear">Hoodies &amp; Outerwear</button>
+      <button type="button" class="filter-btn" data-category="tees & tops">Tees &amp; Tops</button>
+      <button type="button" class="filter-btn" data-category="jerseys & sportswear">Jerseys &amp; Sportswear</button>
+      <button type="button" class="filter-btn" data-category="bottoms & cargos">Bottoms &amp; Cargos</button>
+      <button type="button" class="filter-btn" data-category="caps & headwear">Caps &amp; Headwear</button>
+      <button type="button" class="filter-btn" data-category="watches & jewelry">Watches &amp; Jewelry</button>
+      <button type="button" class="filter-btn" data-category="smart wearables">Smart Wearables</button>
+      <button type="button" class="filter-btn" data-category="bags & crossbodies">Bags &amp; Crossbodies</button>
+      <button type="button" class="filter-btn" data-category="eyewear & scarves">Eyewear &amp; Scarves</button>
     </div>
     <div class="search-box">
       <input type="text" id="search-input" placeholder="Search drop # or item name..." />
@@ -1564,18 +1570,24 @@ function setCurrency(curr) {
       }
       refreshCheckoutSummary();
     }
-    function inferCategory(item) {
-    const rawCat = (item.category || "").trim().toLowerCase();
-    if (rawCat && rawCat !== "all drops" && rawCat !== "all") {
-      return rawCat;
+        function inferCategory(item) {
+      const rawCat = (item.category || "").trim().toLowerCase();
+      if (rawCat && rawCat !== "all drops" && rawCat !== "all") {
+        return rawCat;
+      }
+      const text = `${item.title || ""} ${item.description || ""} ${item.tag || ""}`.toLowerCase();
+      if (text.includes("shoe") || text.includes("sneaker") || text.includes("slide") || text.includes("kick") || text.includes("boot")) return "kicks & slides";
+      if (text.includes("tracksuit") || text.includes("set") || text.includes("co-ord")) return "tracksuits & sets";
+      if (text.includes("hoodie") || text.includes("jacket") || text.includes("outerwear") || text.includes("puffer")) return "hoodies & outerwear";
+      if (text.includes("jersey") || text.includes("kit") || text.includes("sportswear")) return "jerseys & sportswear";
+      if (text.includes("tee") || text.includes("shirt") || text.includes("top")) return "tees & tops";
+      if (text.includes("pant") || text.includes("cargo") || text.includes("short") || text.includes("denim")) return "bottoms & cargos";
+      if (text.includes("cap") || text.includes("hat") || text.includes("beanie") || text.includes("balaclava")) return "caps & headwear";
+      if (text.includes("watch") || text.includes("chain") || text.includes("ring") || text.includes("bracelet")) return "watches & jewelry";
+      if (text.includes("smart") || text.includes("band") || text.includes("wearable")) return "smart wearables";
+      if (text.includes("bag") || text.includes("sling") || text.includes("backpack") || text.includes("wallet")) return "bags & crossbodies";
+      return "eyewear & scarves";
     }
-    const text = `${item.title || ""} ${item.description || ""} ${item.tag || ""}`.toLowerCase();
-    if (text.includes("shoe") || text.includes("sneaker") || text.includes("slide") || text.includes("kick")) return "shoes";
-    if (text.includes("hoodie") || text.includes("jacket") || text.includes("outerwear")) return "hoodies & outerwear";
-    if (text.includes("tee") || text.includes("shirt") || text.includes("top")) return "tees & tops";
-    if (text.includes("pant") || text.includes("cargo") || text.includes("short")) return "bottoms & cargos";
-    return "accessories & scarves";
-  }
 
   async function loadProducts() {
   try {
@@ -1702,9 +1714,11 @@ function setCurrency(curr) {
       document.getElementById("modal-item-title").textContent = item.title;
       refreshCheckoutSummary();
       updatePaymentEligibility();
-      document.getElementById("checkout-modal").classList.add("active");
+            document.getElementById("checkout-modal").classList.add("active");
     });
   });
+}
+
         function updatePaymentEligibility() {
       const county = document.getElementById("cust-county").value;
       const city = (document.getElementById("cust-city")?.value || "").trim();
@@ -1901,7 +1915,7 @@ function setCurrency(curr) {
       return false;
     }
 
-        function isPreOrderDrop(product) {
+     function isPreOrderDrop(product) {
       if (!product || !product.tag) return false;
       const tag = String(product.tag).toLowerCase();
       return tag.includes("pre-order") || tag.includes("preorder") || tag.includes("import");
