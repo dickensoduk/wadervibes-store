@@ -1340,6 +1340,15 @@
   const API_BASE = BACKEND_URL;
   const PAYSTACK_PUBLIC_KEY = "pk_live_481e93ab1a25495849f6de5800fa2e58eea298b5";
   const USD_TO_KES = 130;
+  function escapeHTML(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
   let currentCurrency = "KES";
   let sharedAudioCtx = null;
 
@@ -1571,7 +1580,7 @@ function setCurrency(curr) {
       }
       refreshCheckoutSummary();
     }
-            function inferCategory(item) {
+    function inferCategory(item) {
       const rawCat = (item.category || "").trim().toLowerCase();
       if (rawCat && rawCat !== "all drops" && rawCat !== "all") {
         return rawCat;
@@ -1663,19 +1672,24 @@ function setCurrency(curr) {
 
     const card = document.createElement("article");
     card.className = "card";
+    const safeTitle = escapeHTML(item.title);
+    const safeDesc = escapeHTML(item.description || "Official @king_wader drop.");
+    const safeBadge = escapeHTML(badgeLabel);
+    const safeImg = displayImg && /^https?:\/\//i.test(displayImg) ? escapeHTML(displayImg) : "";
+
     card.innerHTML = `
       <div class="card-img">
-        <span class="drop-num">DROP #${item.dropNumber}</span>
-        <span class="tag-pill">${badgeLabel}</span>
-        ${displayImg ? `<img id="card-img-${item.id}" src="${displayImg}" alt="${item.title}" />` : `<span>#wadervibes</span>`}
+        <span class="drop-num">DROP #${escapeHTML(item.dropNumber)}</span>
+        <span class="tag-pill">${safeBadge}</span>
+        ${safeImg ? `<img id="card-img-${Number(item.id)}" src="${safeImg}" alt="${safeTitle}" />` : `<span>#wadervibes</span>`}
       </div>
-              <div class="card-body">
-          <h2 class="card-title">${item.title}</h2>
-          ${swatchesHTML}
-          ${!isAffiliate && typeof getRatingPillHTML === "function" ? getRatingPillHTML(item.title) : ""}
-          <p class="card-desc">${item.description || "Official @king_wader drop."}</p>
-          <div class="price-row">
-          <span class="price">${priceVal}</span>
+      <div class="card-body">
+        <h2 class="card-title">${safeTitle}</h2>
+        ${swatchesHTML}
+        ${!isAffiliate && typeof getRatingPillHTML === "function" ? getRatingPillHTML(item.title) : ""}
+        <p class="card-desc">${safeDesc}</p>
+        <div class="price-row">
+          <span class="price">${escapeHTML(priceVal)}</span>
           <span class="shipping-note">${
             isAffiliate
               ? "Partner Direct"
@@ -1684,8 +1698,8 @@ function setCurrency(curr) {
                 : `${stockCount} left • Nationwide Shipping Kenya`
           }</span>
         </div>
-        ${isAffiliate || isOutOfStock ? "" : `<select id="size-${item.id}">${sizeOptions}</select>`}
-        <button class="btn" data-id="${item.id}" ${isOutOfStock ? "disabled style='opacity:0.5;cursor:not-allowed;'" : ""}>
+        ${isAffiliate || isOutOfStock ? "" : `<select id="size-${Number(item.id)}">${sizes.map(s => `<option value="${escapeHTML(s)}">Size: ${escapeHTML(s)}</option>`).join("")}</select>`}
+        <button class="btn" data-id="${Number(item.id)}" ${isOutOfStock ? "disabled style='opacity:0.5;cursor:not-allowed;'" : ""}>
           ${isAffiliate ? "Shop Partner Flag" : isOutOfStock ? "Sold Out" : "Order Now"}
         </button>
       </div>
