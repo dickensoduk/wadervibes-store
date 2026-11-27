@@ -923,7 +923,11 @@
     </div>
   </div>
 
-  <main class="grid" id="product-grid"></main>
+    <main class="grid" id="product-grid">
+    <div style="grid-column:1/-1; text-align:center; padding:3rem 1rem; color:var(--text-muted); font-size:0.95rem;">
+      Loading @king_wader drops... (waking up drop hub, please wait a few seconds)
+    </div>
+  </main>
 
     <!-- Creator POV & Social Community Hub -->
   <style>
@@ -1648,8 +1652,8 @@ function setCurrency(curr) {
 
                 filtered.forEach((item) => {
     const sizes = Array.isArray(item.sizes) && item.sizes.length ? item.sizes : ["Standard"];
-    const sizeOptions = sizes.map((s) => `<option value="${s}">Size: ${s}</option>`).join("");
-    const isAffiliate = item.fulfillment_type === "affiliate" && item.external_url;
+    const partnerLink = (item.affiliate_url || item.external_url || "").trim();
+    const isAffiliate = Boolean(partnerLink && /^https?:\/\//i.test(partnerLink));
     const priceVal = formatPrice(item.price_usd || item.price || 0);
     const badgeLabel = item.tag || (isAffiliate ? "Featured Plug" : "#wadervibes");
     const stockCount = Number(item.stock_quantity ?? 7);
