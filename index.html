@@ -903,7 +903,7 @@
 
   <!-- Search & Category Filter Bar -->
   <div class="controls-bar">
-        <div class="filter-pills" id="category-pills">
+            <div class="filter-pills" id="category-pills">
       <button type="button" class="filter-btn active" data-category="all">All Drops</button>
       <button type="button" class="filter-btn" data-category="kicks & slides">Kicks &amp; Slides</button>
       <button type="button" class="filter-btn" data-category="tracksuits & sets">Tracksuits &amp; Sets</button>
@@ -1570,7 +1570,7 @@ function setCurrency(curr) {
       }
       refreshCheckoutSummary();
     }
-        function inferCategory(item) {
+            function inferCategory(item) {
       const rawCat = (item.category || "").trim().toLowerCase();
       if (rawCat && rawCat !== "all drops" && rawCat !== "all") {
         return rawCat;
