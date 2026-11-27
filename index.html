@@ -2198,7 +2198,7 @@ document.getElementById("track-order-form").addEventListener("submit", async (e)
                 <span style="font-size:0.75rem; color:#7dd3fc;">Tracking: <strong>${escapeHTML(o.tracking_number)}</strong></span>
                 <div style="display:flex; gap:5px;">
                   <button type="button" data-ref="${escapeHTML(o.tracking_number)}" onclick="copyOrderRef(this.dataset.ref, this)" style="background:rgba(56,189,248,0.18); border:1px solid #38bdf8; color:#e0f2fe; border-radius:6px; padding:2px 7px; font-size:0.7rem; font-weight:700; cursor:pointer;">Copy</button>
-                  <a href="https://track123.com{encodeURIComponent(o.tracking_number)}" target="_blank" rel="noopener noreferrer" style="background:#38bdf8; color:#04110a; border-radius:6px; padding:2px 7px; font-size:0.7rem; font-weight:800; text-decoration:none;">Live Map ↗</a>
+                  <a href="https://track123.com/track?trackNos=${encodeURIComponent(o.tracking_number)}" target="_blank" rel="noopener noreferrer" style="background:#38bdf8; color:#04110a; border-radius:6px; padding:2px 7px; font-size:0.7rem; font-weight:800; text-decoration:none;">Live Map ↗</a>
                 </div>
               </div>
             ` : ""}
