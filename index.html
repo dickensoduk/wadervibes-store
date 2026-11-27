@@ -1220,6 +1220,17 @@
       <h2 id="modal-item-title">Complete Order</h2>
       <p id="modal-item-meta">Size: L &bull; $29.99 USD (Nationwide Shipping Kenya)</p>
       <form id="checkout-form">
+                <!-- Colorway Preview & Swatch Selector -->
+        <div id="color-picker-wrap" style="display:none; margin-bottom:10px; padding:10px 12px; border-radius:10px; background:rgba(7,19,13,0.85); border:1px solid var(--border);">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+            <img id="modal-item-img" src="" alt="" style="width:48px; height:48px; object-fit:cover; border-radius:8px; border:1px solid var(--border);" />
+            <div>
+              <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">Selected Colorway</div>
+              <div id="modal-selected-color-label" style="font-size:0.9rem; font-weight:800; color:#7ef9d0;">Default</div>
+            </div>
+          </div>
+          <div id="modal-color-pills" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
+        </div>
                         <!-- Multi-Size Quantity Picker -->
         <div style="margin-bottom:10px; padding:10px 12px; border-radius:10px; background:rgba(7,19,13,0.85); border:1px solid var(--border);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -1406,7 +1417,153 @@ function setCurrency(curr) {
     let activeProduct = null;
     let activeSize = null;
     let selectedPayMethod = "mpesa";
+    let activeColor = "";
+    const cardSelectedColors = {};
 
+    const COLOR_HEX_MAP = {
+      "black": "#111315",
+      "white": "#f8fafc",
+      "grey": "#9ca3af",
+      "gray": "#9ca3af",
+      "red": "#dc2626",
+      "blue": "#2563eb",
+      "green": "#16a34a",
+      "yellow": "#facc15",
+      "orange": "#f97316",
+      "pink": "#ec4899",
+      "purple": "#9333ea",
+      "brown": "#78350f",
+      "gold": "#eab308",
+      "silver": "#cbd5e1",
+      "jet black": "#090a0b",
+      "off-white / ivory": "#faf6ee",
+      "off-white": "#faf6ee",
+      "ivory": "#faf6ee",
+      "cream / beige": "#e7dcc8",
+      "cream": "#e7dcc8",
+      "beige": "#d6c5a9",
+      "heather grey": "#9ca3af",
+      "washed charcoal": "#374151",
+      "charcoal": "#374151",
+      "navy blue": "#1e3a8a",
+      "navy": "#1e3a8a",
+      "sky blue": "#38bdf8",
+      "baby blue": "#7dd3fc",
+      "teal / cyan": "#0d9488",
+      "teal": "#0d9488",
+      "cyan": "#06b6d4",
+      "forest green": "#14532d",
+      "olive drab": "#556b2f",
+      "olive": "#556b2f",
+      "sage green": "#84a98c",
+      "sage": "#84a98c",
+      "mint green": "#6ee7b7",
+      "mint": "#6ee7b7",
+      "crimson red": "#b91c1c",
+      "crimson": "#b91c1c",
+      "burgundy / maroon": "#7f1d1d",
+      "burgundy": "#7f1d1d",
+      "maroon": "#6b141a",
+      "rust / terracotta": "#c2410c",
+      "rust": "#c2410c",
+      "terracotta": "#c2410c",
+      "chocolate brown": "#451a03",
+      "chocolate": "#451a03",
+      "tan / camel": "#c19a6b",
+      "tan": "#c19a6b",
+      "camel": "#c19a6b",
+      "sand / khaki": "#c2b280",
+      "sand": "#c2b280",
+      "khaki": "#c2b280",
+      "mustard / gold": "#d97706",
+      "mustard": "#d97706",
+      "rose gold": "#e0a99a",
+      "blaze orange": "#ea580c",
+      "baby pink": "#f472b6",
+      "lavender / lilac": "#c084fc",
+      "lavender": "#c084fc",
+      "lilac": "#c084fc",
+      "camo / multi": "linear-gradient(135deg, #4b5320 0%, #786d5f 50%, #1f2419 100%)",
+      "camo": "linear-gradient(135deg, #4b5320 0%, #786d5f 50%, #1f2419 100%)",
+      "multi": "linear-gradient(135deg, #ef4444 0%, #eab308 50%, #3b82f6 100%)"
+    };
+
+    function getColorSwatchHex(name) {
+      const clean = String(name || "").trim().toLowerCase();
+      if (COLOR_HEX_MAP[clean]) return COLOR_HEX_MAP[clean];
+      for (const [key, val] of Object.entries(COLOR_HEX_MAP)) {
+        if (clean.includes(key)) return val;
+      }
+      return "#18b267";
+    }
+
+    function normalizeColorVariants(item) {
+      if (!Array.isArray(item.colors)) return [];
+      return item.colors
+        .filter(c => c && c.name)
+        .map(c => ({
+          name: String(c.name).trim(),
+          image_url: String(c.image_url || item.image_url || "").trim()
+        }));
+    }
+
+    function switchCardColor(productId, colorName, imgUrl, dotEl) {
+      cardSelectedColors[productId] = { name: colorName, image_url: imgUrl };
+      const imgEl = document.getElementById(`card-img-${productId}`);
+      if (imgEl && imgUrl) imgEl.src = imgUrl;
+      if (dotEl && dotEl.parentElement) {
+        dotEl.parentElement.querySelectorAll(".swatch-dot").forEach(d => {
+          d.style.outline = "none";
+          d.style.transform = "scale(1)";
+        });
+        dotEl.style.outline = "2px solid #25e080";
+        dotEl.style.outlineOffset = "2px";
+        dotEl.style.transform = "scale(1.15)";
+      }
+    }
+
+    function initModalColorPicker(item, variants, chosen) {
+      const wrap = document.getElementById("color-picker-wrap");
+      const pillsEl = document.getElementById("modal-color-pills");
+      const imgEl = document.getElementById("modal-item-img");
+      const labelEl = document.getElementById("modal-selected-color-label");
+
+      if (!variants.length) {
+        activeColor = "";
+        if (wrap) wrap.style.display = "none";
+        return;
+      }
+
+      const current = chosen || variants[0];
+      activeColor = current.name;
+      if (wrap) wrap.style.display = "block";
+      if (imgEl) imgEl.src = current.image_url || item.image_url || "";
+      if (labelEl) labelEl.textContent = current.name;
+
+      pillsEl.innerHTML = variants.map(v => `
+        <button type="button" onclick="selectDropColor('${v.name.replace(/'/g, "\\'")}', '${v.image_url.replace(/'/g, "\\'")}')"
+          style="display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; font-size:0.78rem; font-weight:700; cursor:pointer;
+          border:1px solid ${v.name === activeColor ? "#25e080" : "var(--border)"};
+          background:${v.name === activeColor ? "rgba(24,178,103,0.2)" : "rgba(255,255,255,0.04)"};
+          color:${v.name === activeColor ? "#7ef9d0" : "var(--text-main)"};">
+          <span style="width:11px; height:11px; border-radius:999px; background:${getColorSwatchHex(v.name)}; border:1px solid rgba(255,255,255,0.4);"></span>
+          ${v.name}
+        </button>
+      `).join("");
+    }
+
+    function selectDropColor(colorName, imgUrl) {
+      activeColor = colorName;
+      const imgEl = document.getElementById("modal-item-img");
+      const labelEl = document.getElementById("modal-selected-color-label");
+      if (imgEl && imgUrl) imgEl.src = imgUrl;
+      if (labelEl) labelEl.textContent = colorName;
+      if (activeProduct) {
+        const variants = normalizeColorVariants(activeProduct);
+        initModalColorPicker(activeProduct, variants, { name: colorName, image_url: imgUrl });
+      }
+      refreshCheckoutSummary();
+    }
     function inferCategory(item) {
     const rawCat = (item.category || "").trim().toLowerCase();
     if (rawCat && rawCat !== "all drops" && rawCat !== "all") {
@@ -1467,7 +1624,7 @@ function setCurrency(curr) {
         return;
       }
 
-        filtered.forEach((item) => {
+                filtered.forEach((item) => {
     const sizes = Array.isArray(item.sizes) && item.sizes.length ? item.sizes : ["Standard"];
     const sizeOptions = sizes.map((s) => `<option value="${s}">Size: ${s}</option>`).join("");
     const isAffiliate = item.fulfillment_type === "affiliate" && item.external_url;
@@ -1476,16 +1633,32 @@ function setCurrency(curr) {
     const stockCount = Number(item.stock_quantity ?? 7);
     const isOutOfStock = !isAffiliate && stockCount <= 0;
 
+    const variants = normalizeColorVariants(item);
+    const initialVariant = cardSelectedColors[item.id] || variants[0] || null;
+    const displayImg = (initialVariant && initialVariant.image_url) || item.image_url;
+    const swatchesHTML = variants.length
+      ? `<div style="display:flex; align-items:center; flex-wrap:wrap; gap:7px; margin:4px 0 8px;">
+          ${variants.map((v, idx) => {
+            const isSelected = initialVariant && initialVariant.name === v.name;
+            return `<button type="button" class="swatch-dot" title="${v.name}"
+              onclick="switchCardColor(${item.id}, '${v.name.replace(/'/g, "\\'")}', '${v.image_url.replace(/'/g, "\\'")}', this)"
+              style="width:18px; height:18px; border-radius:999px; border:1.5px solid rgba(255,255,255,0.45); background:${getColorSwatchHex(v.name)}; cursor:pointer; padding:0; transition:transform 0.15s ease; ${isSelected || (!initialVariant && idx === 0) ? "outline:2px solid #25e080; outline-offset:2px;" : ""}">
+            </button>`;
+          }).join("")}
+        </div>`
+      : "";
+
     const card = document.createElement("article");
     card.className = "card";
     card.innerHTML = `
       <div class="card-img">
         <span class="drop-num">DROP #${item.dropNumber}</span>
         <span class="tag-pill">${badgeLabel}</span>
-        ${item.image_url ? `<img src="${item.image_url}" alt="${item.title}" />` : `<span>#wadervibes</span>`}
+        ${displayImg ? `<img id="card-img-${item.id}" src="${displayImg}" alt="${item.title}" />` : `<span>#wadervibes</span>`}
       </div>
               <div class="card-body">
           <h2 class="card-title">${item.title}</h2>
+          ${swatchesHTML}
           ${!isAffiliate && typeof getRatingPillHTML === "function" ? getRatingPillHTML(item.title) : ""}
           <p class="card-desc">${item.description || "Official @king_wader drop."}</p>
           <div class="price-row">
@@ -1522,6 +1695,9 @@ function setCurrency(curr) {
       activeProduct = item;
       const sizeEl = document.getElementById(`size-${item.id}`);
       activeSize = sizeEl ? sizeEl.value : "Standard";
+      const variants = normalizeColorVariants(item);
+      const chosen = cardSelectedColors[item.id] || variants[0] || null;
+      initModalColorPicker(item, variants, chosen);
       initMultiSizePicker(item, activeSize);
       document.getElementById("modal-item-title").textContent = item.title;
       refreshCheckoutSummary();
@@ -1529,8 +1705,6 @@ function setCurrency(curr) {
       document.getElementById("checkout-modal").classList.add("active");
     });
   });
-}
-
         function updatePaymentEligibility() {
       const county = document.getElementById("cust-county").value;
       const city = (document.getElementById("cust-city")?.value || "").trim();
@@ -1670,11 +1844,15 @@ function setCurrency(curr) {
       refreshCheckoutSummary();
     }
 
-    function getSizeBreakdownSummary() {
+      function getSizeBreakdownSummary() {
       const entries = Object.entries(selectedSizeCounts).filter(([, c]) => c > 0);
-      if (entries.length === 0) return activeSize || "Standard";
-      if (entries.length === 1 && entries[0][1] === 1) return entries[0][0];
-      return entries.map(([sz, c]) => `${c}x ${sz}`).join(", ");
+      let baseSummary = activeSize || "Standard";
+      if (entries.length === 1 && entries[0][1] === 1) {
+        baseSummary = entries[0][0];
+      } else if (entries.length > 0) {
+        baseSummary = entries.map(([sz, c]) => `${c}x ${sz}`).join(", ");
+      }
+      return activeColor ? `${activeColor} — ${baseSummary}` : baseSummary;
     }
 
     function getCheckoutTotals() {
