@@ -2188,15 +2188,17 @@ document.getElementById("track-order-form").addEventListener("submit", async (e)
               <span style="background:${badgeBg}; color:${badgeColor}; padding:2px 8px; border-radius:999px; font-weight:800; font-size:0.72rem;">${escapeHTML(st)}</span>
             </div>
             <div style="color:var(--text-main); font-weight:700; margin-bottom:3px;">${escapeHTML(o.product_title)} (${escapeHTML(o.size)}) &bull; ${escapeHTML(formatPrice(o.amount_usd))}</div>
+                        <div style="color:var(--text-main); font-weight:700; margin-bottom:3px;">${escapeHTML(o.product_title)} (${escapeHTML(o.size)}) &bull; ${escapeHTML(formatPrice(o.amount_usd))}</div>
             ${o.tracking_number ? `
-  <div style="margin:6px 0; padding:6px 10px; border-radius:8px; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.35); display:flex; justify-content:space-between; align-items:center; gap:8px;">
-    <span style="font-size:0.75rem; color:#7dd3fc;">Tracking: <strong>${escapeHTML(o.tracking_number)}</strong></span>
-    <div style="display:flex; gap:5px;">
-      <button type="button" data-ref="${escapeHTML(o.tracking_number)}" onclick="copyOrderRef(this.dataset.ref, this)" style="background:rgba(56,189,248,0.18); border:1px solid #38bdf8; color:#e0f2fe; border-radius:6px; padding:2px 7px; font-size:0.7rem; font-weight:700; cursor:pointer;">Copy</button>
-      <a href="https://track123.com{encodeURIComponent(o.tracking_number)}" target="_blank" rel="noopener noreferrer" style="background:#38bdf8; color:#04110a; border-radius:6px; padding:2px 7px; font-size:0.7rem; font-weight:800; text-decoration:none;">Live Map ↗</a>
-    </div>
-  </div>
-` : ""}
+              <div style="margin:6px 0; padding:6px 10px; border-radius:8px; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.35); display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                <span style="font-size:0.75rem; color:#7dd3fc;">Tracking: <strong>${escapeHTML(o.tracking_number)}</strong></span>
+                <div style="display:flex; gap:5px;">
+                  <button type="button" data-ref="${escapeHTML(o.tracking_number)}" onclick="copyOrderRef(this.dataset.ref, this)" style="background:rgba(56,189,248,0.18); border:1px solid #38bdf8; color:#e0f2fe; border-radius:6px; padding:2px 7px; font-size:0.7rem; font-weight:700; cursor:pointer;">Copy</button>
+                  <a href="https://track123.com{encodeURIComponent(o.tracking_number)}" target="_blank" rel="noopener noreferrer" style="background:#38bdf8; color:#04110a; border-radius:6px; padding:2px 7px; font-size:0.7rem; font-weight:800; text-decoration:none;">Live Map ↗</a>
+                </div>
+              </div>
+            ` : ""}
+            <div style="color:var(--text-muted); font-size:0.76rem; line-height:1.4;">
               <strong>Recipient:</strong> ${escapeHTML(o.customer_name)}<br>
               <strong>Drop-off:</strong> ${escapeHTML(o.shipping_address)}, ${escapeHTML(o.city)} (${escapeHTML(o.county)})<br>
               <strong>Payment:</strong> ${escapeHTML(o.payment_method)} &bull; ${escapeHTML((o.created_at || "").slice(0, 10))}
