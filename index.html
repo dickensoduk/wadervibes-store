@@ -501,7 +501,65 @@
       border-color: rgba(37, 224, 128, 0.65);
       box-shadow: 0 16px 38px rgba(0, 0, 0, 0.72), 0 0 28px rgba(37, 224, 128, 0.22), inset 0 1px 0 rgba(126, 249, 208, 0.22);
     }
+    /* Staggered Card Reveal on Filter/Load */
+    @keyframes dropCardIn {
+      from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .card.drop-animate {
+      opacity: 0;
+      animation: dropCardIn 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
 
+    /* Live Low-Stock Urgency Pulse (Stock <= 2) */
+    @keyframes lowStockPulse {
+      0%, 100% {
+        box-shadow: 0 0 8px rgba(251, 191, 36, 0.25);
+        border-color: rgba(251, 191, 36, 0.55);
+      }
+      50% {
+        box-shadow: 0 0 16px rgba(251, 191, 36, 0.6);
+        border-color: #fcd34d;
+      }
+    }
+    .low-stock-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(251, 191, 36, 0.14);
+      border: 1px solid rgba(251, 191, 36, 0.55);
+      color: #fde68a;
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      animation: lowStockPulse 2.1s ease-in-out infinite;
+    }
+    .low-stock-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #fbbf24;
+      box-shadow: 0 0 6px #fbbf24;
+    }
+
+    /* Tactile Order Button Micro-Interaction */
+    .btn {
+      transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease, background 0.2s ease;
+    }
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1.5px);
+      box-shadow: 0 0 20px rgba(37, 224, 128, 0.45);
+    }
+    .btn:active:not(:disabled) {
+      transform: scale(0.97);
+    }
     /* Native Custom Picker Triggers & Modals (Command Center Match) */
     .native-picker-btn {
       width: 100%;
@@ -1869,7 +1927,7 @@ function setCurrency(curr) {
         return;
       }
 
-                filtered.forEach((item) => {
+    filtered.forEach((item, cardIdx) => {
     const sizes = Array.isArray(item.sizes) && item.sizes.length ? item.sizes : ["Standard"];
     const partnerLink = (item.affiliate_url || item.external_url || "").trim();
     const isAffiliate = Boolean(partnerLink && /^https?:\/\//i.test(partnerLink));
@@ -1877,6 +1935,7 @@ function setCurrency(curr) {
     const badgeLabel = item.tag || (isAffiliate ? "Featured Plug" : "#wadervibes");
     const stockCount = Number(item.stock_quantity ?? 7);
     const isOutOfStock = !isAffiliate && stockCount <= 0;
+    const isLowStock = !isAffiliate && stockCount > 0 && stockCount <= 2;
 
     const variants = normalizeColorVariants(item);
     const initialVariant = cardSelectedColors[item.id] || variants[0] || null;
@@ -1894,11 +1953,20 @@ function setCurrency(curr) {
       : "";
 
     const card = document.createElement("article");
-    card.className = "card";
+    card.className = "card drop-animate";
+    card.style.animationDelay = `${Math.min(cardIdx * 45, 360)}ms`;
     const safeTitle = escapeHTML(item.title);
     const safeDesc = escapeHTML(item.description || "Official @king_wader drop.");
     const safeBadge = escapeHTML(badgeLabel);
     const safeImg = displayImg && /^https?:\/\//i.test(displayImg) ? escapeHTML(displayImg) : "";
+
+    const stockStatusHTML = isAffiliate
+      ? `<span class="shipping-note">Partner Direct</span>`
+      : isOutOfStock
+        ? `<span class="shipping-note" style="color:#fca5a5; font-weight:700;">Sold Out</span>`
+        : isLowStock
+          ? `<span class="low-stock-pill"><span class="low-stock-dot"></span>Only ${stockCount} left!</span>`
+          : `<span class="shipping-note">${stockCount} left • Nationwide KE</span>`;
 
     card.innerHTML = `
       <div class="card-img">
@@ -1913,13 +1981,7 @@ function setCurrency(curr) {
         <p class="card-desc">${safeDesc}</p>
         <div class="price-row">
           <span class="price">${escapeHTML(priceVal)}</span>
-          <span class="shipping-note">${
-            isAffiliate
-              ? "Partner Direct"
-              : isOutOfStock
-                ? "Sold Out"
-                : `${stockCount} left • Nationwide Shipping Kenya`
-          }</span>
+          ${stockStatusHTML}
         </div>
      ${isAffiliate || isOutOfStock ? "" : `
        <input type="hidden" id="size-${Number(item.id)}" value="${escapeHTML(sizes[0])}" />
