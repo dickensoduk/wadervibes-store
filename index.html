@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=900">
   <link rel="preconnect" href="https://googleapis.com">
-<link rel="preconnect" href="https://gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap" rel="stylesheet">
   <title>WADER | Official Shop of @king_wader (#wadervibes)</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307130d'/%3E%3Cpath d='M12 44L16 22L26 32L32 18L38 32L48 22L52 44H12Z' fill='%2318b267'/%3E%3Ccircle cx='16' cy='18' r='3' fill='%2318b267'/%3E%3Ccircle cx='32' cy='14' r='3.5' fill='%2318b267'/%3E%3Ccircle cx='48' cy='18' r='3' fill='%2318b267'/%3E%3C/svg%3E" />
@@ -485,19 +485,132 @@
       max-width: 1200px;
       margin: 0 auto;
     }
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
+      .card {
+      background: linear-gradient(180deg, rgba(11, 34, 21, 0.92) 0%, rgba(6, 22, 13, 0.96) 100%);
+      border: 1px solid rgba(37, 224, 128, 0.28);
       border-radius: 18px;
       overflow: hidden;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px);
       display: flex;
       flex-direction: column;
-      transition: transform 0.2s ease, border-color 0.2s ease;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(37, 224, 128, 0.08), inset 0 1px 0 rgba(126, 249, 208, 0.14);
+      transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.24s ease, box-shadow 0.24s ease;
     }
     .card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(24, 178, 103, 0.45);
+      transform: translateY(-5px);
+      border-color: rgba(37, 224, 128, 0.65);
+      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.72), 0 0 28px rgba(37, 224, 128, 0.22), inset 0 1px 0 rgba(126, 249, 208, 0.22);
+    }
+
+    /* Native Custom Picker Triggers & Modals (Command Center Match) */
+    .native-picker-btn {
+      width: 100%;
+      box-sizing: border-box;
+      background: #04110a;
+      color: #e8f5ee;
+      border: 1px solid rgba(37, 224, 128, 0.35);
+      border-radius: 10px;
+      padding: 0.65rem 0.85rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .native-picker-btn:hover {
+      border-color: #25e080;
+      box-shadow: 0 0 14px rgba(37, 224, 128, 0.3), inset 0 2px 6px rgba(0, 0, 0, 0.45);
+    }
+    .native-option-item {
+      padding: 10px 12px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #e8f5ee;
+      background: #04110a;
+      border: 1px solid rgba(37, 224, 128, 0.22);
+      border-radius: 10px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.16s ease;
+    }
+    .native-option-item:hover {
+      border-color: #25e080;
+      background: #0b2416;
+    }
+    .native-option-item.active {
+      background: #123d26;
+      border-color: #25e080;
+      color: #7ef9d0;
+    }
+    .native-option-item.active::after {
+      content: "✓";
+      font-weight: 900;
+      color: #25e080;
+    }
+
+    /* Native Floating Toast Notification */
+    #wader-toast {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: linear-gradient(180deg, #0d2b1b 0%, #05160d 100%);
+      border: 1.5px solid #25e080;
+      color: #e8f5ee;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8), 0 0 22px rgba(37, 224, 128, 0.35);
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      max-width: 90vw;
+      text-align: center;
+      transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    #wader-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    #wader-toast.error {
+      border-color: #f87171;
+      background: linear-gradient(180deg, #2b0b12 0%, #140508 100%);
+      color: #fecaca;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8), 0 0 22px rgba(239, 68, 68, 0.35);
+    }
+
+    /* Interactive Star Picker inside Native Rating Modal */
+    .star-selector-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .star-choice-btn {
+      background: #04110a;
+      border: 1.5px solid rgba(252, 211, 77, 0.4);
+      color: #fcd34d;
+      font-size: 1.5rem;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .star-choice-btn.selected,
+    .star-choice-btn:hover {
+      background: rgba(252, 211, 77, 0.16);
+      border-color: #fcd34d;
+      transform: scale(1.08);
+      box-shadow: 0 0 14px rgba(252, 211, 77, 0.45);
     }
     .card-img {
       width: 100%;
@@ -791,13 +904,14 @@
     }
     .modal-backdrop.active { display: flex; }
     .modal {
-      background: #0c2116;
-      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(11, 34, 21, 0.97) 0%, rgba(6, 22, 13, 0.99) 100%);
+      border: 1px solid rgba(37, 224, 128, 0.45);
       border-radius: 18px;
       max-width: 460px;
       width: 100%;
       padding: 1.75rem;
       margin: auto;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 28px rgba(37, 224, 128, 0.18), inset 0 1px 0 rgba(126, 249, 208, 0.18);
     }
     .modal h2 { font-size: 1.25rem; margin-bottom: 0.35rem; }
     .modal p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; }
@@ -1260,19 +1374,11 @@
           Tip: Remember or Screenshot this PIN + exact Name to track your order anytime.
         </div>
 
-                <select id="cust-county" required>
-          <option value="Kisumu">Kisumu County</option>
-          <option value="Nairobi">Nairobi County</option>
-          <option value="Mombasa">Mombasa County</option>
-          <option value="Nakuru">Nakuru County</option>
-          <option value="Uasin Gishu">Uasin Gishu (Eldoret)</option>
-          <option value="Kiambu">Kiambu County (Thika / Ruiru)</option>
-          <option value="Machakos">Machakos County</option>
-          <option value="Kajiado">Kajiado County</option>
-          <option value="Kakamega">Kakamega County</option>
-          <option value="Kisii">Kisii County</option>
-          <option value="Other Kenya County">Other Kenya County (Nationwide Courier)</option>
-        </select>
+        <input type="hidden" id="cust-county" value="Kisumu" />
+        <button type="button" class="native-picker-btn" onclick="openNativePicker('county-picker-modal')">
+          <span id="selected-county-label">Kisumu County</span>
+          <span>▾</span>
+        </button>
         <input type="text" id="cust-city" placeholder="Town / Estate / Area (e.g. Milimani, Westlands, Nyali)" required />
         <input type="text" id="cust-address" placeholder="Street / Building / Preferred Bus Courier Stage" required />
 
@@ -1336,6 +1442,66 @@
       <div id="track-results" style="margin-top:14px; display:flex; flex-direction:column; gap:10px; max-height:280px; overflow-y:auto;"></div>
     </div>
   </div>
+  <!-- Native County Picker Modal -->
+  <div class="modal-backdrop" id="county-picker-modal" onclick="if(event.target===this) closeNativePicker('county-picker-modal')">
+    <div class="modal" style="max-width:380px; max-height:80vh; overflow-y:auto;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="margin:0; color:#bbf7d0;">Select Delivery County</h3>
+        <button type="button" class="btn btn-secondary" style="width:auto; padding:4px 10px;" onclick="closeNativePicker('county-picker-modal')">✕</button>
+      </div>
+      <div id="county-options-list">
+        <div class="native-option-item active" data-val="Kisumu" onclick="selectNativeCounty(this)">Kisumu County</div>
+        <div class="native-option-item" data-val="Nairobi" onclick="selectNativeCounty(this)">Nairobi County</div>
+        <div class="native-option-item" data-val="Mombasa" onclick="selectNativeCounty(this)">Mombasa County</div>
+        <div class="native-option-item" data-val="Nakuru" onclick="selectNativeCounty(this)">Nakuru County</div>
+        <div class="native-option-item" data-val="Uasin Gishu" onclick="selectNativeCounty(this)">Uasin Gishu (Eldoret)</div>
+        <div class="native-option-item" data-val="Kiambu" onclick="selectNativeCounty(this)">Kiambu County (Thika / Ruiru)</div>
+        <div class="native-option-item" data-val="Machakos" onclick="selectNativeCounty(this)">Machakos County</div>
+        <div class="native-option-item" data-val="Kajiado" onclick="selectNativeCounty(this)">Kajiado County</div>
+        <div class="native-option-item" data-val="Kakamega" onclick="selectNativeCounty(this)">Kakamega County</div>
+        <div class="native-option-item" data-val="Kisii" onclick="selectNativeCounty(this)">Kisii County</div>
+        <div class="native-option-item" data-val="Other Kenya County" onclick="selectNativeCounty(this)">Other Kenya County (Nationwide Courier)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Native Card Size Picker Modal -->
+  <div class="modal-backdrop" id="card-size-modal" onclick="if(event.target===this) closeNativePicker('card-size-modal')">
+    <div class="modal" style="max-width:360px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 id="card-size-modal-title" style="margin:0; color:#bbf7d0;">Select Size</h3>
+        <button type="button" class="btn btn-secondary" style="width:auto; padding:4px 10px;" onclick="closeNativePicker('card-size-modal')">✕</button>
+      </div>
+      <div id="card-size-options-list"></div>
+    </div>
+  </div>
+
+  <!-- Native Rate Drop Modal -->
+  <div class="modal-backdrop" id="rate-modal" onclick="if(event.target===this) closeNativePicker('rate-modal')">
+    <div class="modal" style="max-width:400px;">
+      <h3 style="color:#bbf7d0; margin-bottom:4px;">Rate This Drop</h3>
+      <p id="rate-modal-subtitle" style="margin-bottom:10px;">Verified Delivered buyers only</p>
+      <form id="rate-drop-form">
+        <input type="hidden" id="rate-product-title" />
+        <input type="hidden" id="rate-stars-val" value="5" />
+        <div class="star-selector-row" id="rate-star-buttons">
+          <button type="button" class="star-choice-btn selected" data-star="1">★</button>
+          <button type="button" class="star-choice-btn selected" data-star="2">★</button>
+          <button type="button" class="star-choice-btn selected" data-star="3">★</button>
+          <button type="button" class="star-choice-btn selected" data-star="4">★</button>
+          <button type="button" class="star-choice-btn selected" data-star="5">★</button>
+        </div>
+        <input type="text" id="rate-order-ref" placeholder="Delivered Order Reference (e.g. POD-173... or PSK-...)" required />
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeNativePicker('rate-modal')">Cancel</button>
+          <button type="submit" class="btn" id="submit-rate-btn">Submit Rating</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Native Toast Notification -->
+  <div id="wader-toast" role="status" aria-live="polite"></div>
 
   <!-- Paystack Inline Checkout Script -->
   <script src="https://js.paystack.co/v1/inline.js"></script>
@@ -1344,6 +1510,59 @@
   const API_BASE = BACKEND_URL;
   const PAYSTACK_PUBLIC_KEY = "pk_live_481e93ab1a25495849f6de5800fa2e58eea298b5";
   const USD_TO_KES = 130;
+  let toastTimer = null;
+  function showWaderToast(msg, isError = false) {
+    const el = document.getElementById("wader-toast");
+    if (!el) return;
+    el.textContent = msg;
+    el.className = isError ? "show error" : "show";
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.classList.remove("show"); }, 4200);
+  }
+
+  function openNativePicker(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.add("active");
+  }
+
+  function closeNativePicker(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove("active");
+  }
+
+  function selectNativeCounty(itemEl) {
+    const val = itemEl.dataset.val;
+    document.getElementById("cust-county").value = val;
+    document.getElementById("selected-county-label").textContent = itemEl.textContent.trim();
+    document.querySelectorAll("#county-options-list .native-option-item").forEach(el => el.classList.remove("active"));
+    itemEl.classList.add("active");
+    closeNativePicker("county-picker-modal");
+    updatePaymentEligibility();
+    refreshCheckoutSummary();
+  }
+
+  function openCardSizePicker(productId) {
+    const item = ALL_PRODUCTS.find(p => Number(p.id) === Number(productId));
+    if (!item) return;
+    const sizes = Array.isArray(item.sizes) && item.sizes.length ? item.sizes : ["Standard"];
+    const currentVal = document.getElementById(`size-${productId}`)?.value || sizes[0];
+    document.getElementById("card-size-modal-title").textContent = `${item.title} — Size`;
+    document.getElementById("card-size-options-list").innerHTML = sizes.map(s => `
+      <div class="native-option-item ${s === currentVal ? "active" : ""}" onclick="chooseCardSize(${Number(productId)}, '${escapeHTML(s)}')">
+        Size: ${escapeHTML(s)}
+      </div>
+    `).join("");
+    openNativePicker("card-size-modal");
+  }
+
+  function chooseCardSize(productId, sizeVal) {
+    const input = document.getElementById(`size-${productId}`);
+    const label = document.getElementById(`size-label-${productId}`);
+    if (input) input.value = sizeVal;
+    if (label) label.textContent = `Size: ${sizeVal}`;
+    closeNativePicker("card-size-modal");
+  }
+
   function escapeHTML(str) {
     return String(str || "")
       .replace(/&/g, "&amp;")
@@ -1702,7 +1921,13 @@ function setCurrency(curr) {
                 : `${stockCount} left • Nationwide Shipping Kenya`
           }</span>
         </div>
-        ${isAffiliate || isOutOfStock ? "" : `<select id="size-${Number(item.id)}">${sizes.map(s => `<option value="${escapeHTML(s)}">Size: ${escapeHTML(s)}</option>`).join("")}</select>`}
+     ${isAffiliate || isOutOfStock ? "" : `
+       <input type="hidden" id="size-${Number(item.id)}" value="${escapeHTML(sizes[0])}" />
+       <button type="button" class="native-picker-btn" onclick="openCardSizePicker(${Number(item.id)})">
+         <span id="size-label-${Number(item.id)}">Size: ${escapeHTML(sizes[0])}</span>
+         <span>▾</span>
+       </button>
+     `}
         <button class="btn" data-id="${Number(item.id)}" ${isOutOfStock ? "disabled style='opacity:0.5;cursor:not-allowed;'" : ""}>
           ${isAffiliate ? "Shop Partner Flag" : isOutOfStock ? "Sold Out" : "Order Now"}
         </button>
@@ -1787,7 +2012,7 @@ function setCurrency(curr) {
       const county = document.getElementById("cust-county").value;
       const city = (document.getElementById("cust-city")?.value || "").trim();
       if (!isSameDayEligible(activeProduct, county, city)) {
-        alert("Pay on Delivery is only available when this item's local hub is in your area. Please complete your order via M-Pesa / Card.");
+        showWaderToast("Pay on Delivery is only available when this item's local hub is in your area. Please use M-Pesa / Card.", true);
         return;
       }
       selectedPayMethod = "pod";
@@ -2027,7 +2252,7 @@ function setCurrency(curr) {
 
       const data = await res.json();
       if (!res.ok) {
-        alert(data.error || "Order failed. Please try again.");
+        showWaderToast(data.error || "Order failed. Please try again.", true);
         updatePaymentEligibility();
         submitBtn.disabled = false;
         return;
@@ -2036,19 +2261,20 @@ function setCurrency(curr) {
       submitBtn.disabled = false;
       updatePaymentEligibility();
       document.getElementById("checkout-modal").classList.remove("active");
-      alert(`Order confirmed (${data.reference}) for ${county}! We will reach out on WhatsApp/SMS (${customerPhone}) to dispatch your rider.`);
+      playKaChingSound();
+      showWaderToast(`Order confirmed (${data.reference}) for ${county}! We will reach out on WhatsApp/SMS (${customerPhone}) to dispatch your rider.`);
       loadProducts();
     } catch (err) {
       submitBtn.disabled = false;
       updatePaymentEligibility();
-      alert("Network error connecting to Wadervibes server. Please try again.");
+      showWaderToast("Network error connecting to Wadervibes server. Please try again.", true);
     }
     return;
   }
 
-    // 2. Handle M-Pesa / Card via Paystack
+  // 2. Handle M-Pesa / Card via Paystack
   if (typeof PaystackPop === "undefined" || PAYSTACK_PUBLIC_KEY.includes("replace_with")) {
-    alert("Order preview ready! Add your Paystack Public Key inside index.html (and enable M-Pesa in your Paystack dashboard).");
+    showWaderToast("Paystack checkout is still loading. Please try again in a moment.", true);
     return;
   }
 
@@ -2077,7 +2303,7 @@ function setCurrency(curr) {
     callback: function(response) {
       document.getElementById("checkout-modal").classList.remove("active");
       playKaChingSound();
-      alert(`Payment successful! Reference: ${response.reference}. Your @king_wader order is being prepared for delivery.`);
+      showWaderToast(`Payment successful! Reference: ${response.reference}. Your @king_wader order is being prepared for delivery.`);
       loadProducts();
     },
     onClose: function() {}
@@ -2111,15 +2337,15 @@ document.getElementById("cancel-order-form").addEventListener("submit", async (e
     const data = await res.json();
 
     if (!res.ok) {
-      alert(data.error || "Could not cancel order.");
+      showWaderToast(data.error || "Could not cancel order.", true);
     } else {
-      alert(data.message || `Order ${data.reference} has been cancelled.`);
+      showWaderToast(data.message || `Order ${data.reference} has been cancelled.`);
       document.getElementById("cancel-modal").classList.remove("active");
       document.getElementById("cancel-order-form").reset();
       loadProducts();
     }
   } catch (err) {
-    alert("Network error connecting to Wadervibes server.");
+    showWaderToast("Network error connecting to Wadervibes server.", true);
   } finally {
     btn.disabled = false;
     btn.textContent = "Cancel Order";
@@ -2404,33 +2630,55 @@ async function loadRatings() {
   }
 }
 
-async function handleStarClick(productTitle, isUnlocked) {
-  const orderRef = prompt("Enter your Delivered Order Reference for " + productTitle + ":");
-  if (!orderRef) return;
-  const stars = prompt("Rate 1 to 5 stars:", "5");
-  if (!stars) return;
-
-  try {
-    const res = await fetch(`${RATINGS_API_BASE}/api/ratings`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        order_ref: orderRef.trim(),
-        product_title: productTitle,
-        stars: Number(stars)
-      })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      alert("Thanks! Your rating is live.");
-      loadRatings();
-    } else {
-      alert(data.error || "Stars unlock once your order is Delivered!");
-    }
-  } catch (err) {
-    alert("Network error submitting rating.");
-  }
+function handleStarClick(productTitle) {
+document.getElementById("rate-product-title").value = productTitle;
+document.getElementById("rate-modal-subtitle").textContent = `Rate ${productTitle} (Delivered orders only)`;
+document.getElementById("rate-order-ref").value = "";
+setModalStarCount(5);
+openNativePicker("rate-modal");
 }
+
+function setModalStarCount(count) {
+document.getElementById("rate-stars-val").value = count;
+document.querySelectorAll("#rate-star-buttons .star-choice-btn").forEach(btn => {
+ btn.classList.toggle("selected", Number(btn.dataset.star) <= count);
+});
+}
+
+document.querySelectorAll("#rate-star-buttons .star-choice-btn").forEach(btn => {
+btn.addEventListener("click", () => setModalStarCount(Number(btn.dataset.star)));
+});
+
+document.getElementById("rate-drop-form").addEventListener("submit", async (e) => {
+e.preventDefault();
+const btn = document.getElementById("submit-rate-btn");
+const productTitle = document.getElementById("rate-product-title").value.trim();
+const orderRef = document.getElementById("rate-order-ref").value.trim();
+const stars = Number(document.getElementById("rate-stars-val").value || 5);
+
+btn.disabled = true;
+btn.textContent = "Submitting...";
+try {
+ const res = await fetch(`${RATINGS_API_BASE}/api/ratings`, {
+   method: "POST",
+   headers: { "Content-Type": "application/json" },
+   body: JSON.stringify({ order_ref: orderRef, product_title: productTitle, stars })
+ });
+ const data = await res.json();
+ if (res.ok) {
+   closeNativePicker("rate-modal");
+   showWaderToast("Thanks! Your verified rating is live.");
+   loadRatings();
+ } else {
+   showWaderToast(data.error || "Stars unlock once your order is Delivered!", true);
+ }
+} catch (err) {
+ showWaderToast("Network error submitting rating.", true);
+} finally {
+ btn.disabled = false;
+ btn.textContent = "Submit Rating";
+}
+});
     
   loadRatings();
 </script>
